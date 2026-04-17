@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src http://localhost:* https://api.groq.com">
+  <title>Guardian Dashboard</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#080b12;--surface:#0d1117;--surface2:#161b22;
+      --border:#21262d;--border2:#30363d;
+      --text:#e6edf3;--text2:#8b949e;--text3:#484f58;
+      --red:#ff3b3b;--red2:#da3633;--red-bg:rgba(255,59,59,0.08);--red-border:rgba(255,59,59,0.25);
+      --green:#3fb950;--green-bg:rgba(63,185,80,0.08);--green-border:rgba(63,185,80,0.25);
+      --blue:#58a6ff;--blue-bg:rgba(88,166,255,0.08);
+      --amber:#d29922;--purple:#bc8cff;
+    }
+    body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;user-select:none}
+    .titlebar{height:38px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;-webkit-app-region:drag;flex-shrink:0}
+    .tb-left{display:flex;align-items:center;gap:10px}
+    .tb-dot{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 6px var(--red)}
+    .tb-title{font-size:13px;font-weight:600;color:var(--text2)}
+    .tb-controls{display:flex;gap:4px;-webkit-app-region:no-drag}
+    .ctrl{width:28px;height:24px;border:none;background:transparent;color:var(--text3);cursor:pointer;border-radius:4px;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+    .ctrl:hover{background:var(--surface2);color:var(--text)}
+    .ctrl.x:hover{background:#da3633;color:#fff}
+    .layout{flex:1;display:flex;overflow:hidden}
+    .sidebar{width:210px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+    .sb-logo{padding:14px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+    .sb-icon{width:26px;height:26px;background:var(--red-bg);border:1px solid var(--red-border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px}
+    .sb-brand{font-size:14px;font-weight:700}
+    .company-chip{margin:10px 10px 0;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:8px 10px}
+    .cc-name{font-size:12px;font-weight:600;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .cc-status{display:flex;align-items:center;gap:5px;font-size:10px}
+    .cc-dot{width:6px;height:6px;border-radius:50%}
+    .cc-dot.on{background:var(--green);box-shadow:0 0 4px var(--green)}
+    .cc-dot.off{background:var(--text3)}
+    .nav-sec{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:12px 14px 4px}
+    .nav-item{display:flex;align-items:center;gap:9px;padding:9px 14px;color:var(--text2);cursor:pointer;font-size:13px;transition:all .15s;border-right:2px solid transparent}
+    .nav-item:hover{background:var(--surface2);color:var(--text)}
+    .nav-item.active{background:rgba(255,59,59,0.06);color:var(--red);border-right-color:var(--red)}
+    .sb-bottom{margin-top:auto;padding:10px;border-top:1px solid var(--border)}
+    .logout-btn{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:8px;color:var(--text2);font-size:12px;cursor:pointer;transition:all .15s}
+    .logout-btn:hover{background:var(--red-bg);color:var(--red);border-color:var(--red-border)}
+    .content{flex:1;overflow-y:auto;padding:22px}
+    .page{display:none}.page.active{display:block}
+    h2{font-size:18px;font-weight:700;margin-bottom:4px}
+    .page-sub{font-size:13px;color:var(--text2);margin-bottom:18px}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
+    .card-title{font-size:13px;font-weight:600;margin-bottom:12px;color:var(--text);display:flex;align-items:center;justify-content:space-between}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+    .stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px}
+    .stat-num{font-size:24px;font-weight:800;margin-bottom:3px}
+    .stat-label{font-size:10px;color:var(--text3)}
+    .conn-hero{border-radius:10px;padding:18px;margin-bottom:16px;display:flex;align-items:center;gap:16px}
+    .conn-hero.on{background:var(--green-bg);border:1px solid var(--green-border)}
+    .conn-hero.off{background:var(--red-bg);border:1px solid var(--red-border)}
+    .conn-icon{font-size:32px}
+    .conn-title{font-size:16px;font-weight:700;margin-bottom:3px}
+    .conn-hero.on .conn-title{color:var(--green)}
+    .conn-hero.off .conn-title{color:var(--red)}
+    .conn-sub{font-size:12px;color:var(--text2);line-height:1.5}
+    /* attack items */
+    .a-item{display:flex;align-items:center;gap:9px;padding:8px 11px;background:var(--surface2);border-radius:7px;margin-bottom:4px;border:1px solid var(--border);font-size:11px;cursor:pointer;transition:all .12s}
+    .a-item:hover{border-color:var(--red-border);background:var(--red-bg)}
+    .a-ip{font-family:monospace;color:var(--red);font-weight:700;flex-shrink:0;min-width:90px}
+    .a-type{color:var(--text2);flex:1}
+    .a-loc{background:var(--red-bg);color:var(--red);padding:2px 6px;border-radius:3px;font-size:9px;font-weight:600;flex-shrink:0}
+    .a-stage{color:var(--text3);font-size:10px;flex-shrink:0}
+    .a-time{color:var(--text3);font-size:10px;flex-shrink:0}
+    .no-attacks{text-align:center;padding:28px;color:var(--text3);font-size:13px}
+    /* AI explainer */
+    .ai-panel{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:10px;font-size:13px;line-height:1.8;color:var(--text);min-height:60px;white-space:pre-wrap}
+    .ai-loading{color:var(--text3);font-style:italic}
+    /* pentest */
+    .pt-hero{background:linear-gradient(135deg,var(--surface),rgba(255,59,59,0.04));border:1px solid var(--border);border-radius:12px;padding:24px;text-align:center;margin-bottom:16px}
+    .pt-target{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:7px 14px;font-family:monospace;font-size:12px;color:var(--green);display:inline-block;margin-bottom:16px}
+    .run-btn{background:var(--red2);color:#fff;border:none;border-radius:9px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+    .run-btn:hover{background:var(--red);transform:scale(1.02)}
+    .run-btn:disabled{background:#21262d;color:var(--text3);cursor:not-allowed;transform:none}
+    .status-bar{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-size:12px}
+    .s-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+    .s-dot.idle{background:var(--text3)}
+    .s-dot.run{background:var(--amber);animation:pulse 1s infinite}
+    .s-dot.done{background:var(--green)}
+    .s-dot.err{background:var(--red)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .prog-wrap{height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-bottom:14px;display:none}
+    .prog-bar{height:3px;background:var(--red);width:0%;transition:width .3s}
+    .pt-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;display:none}
+    .pt-sum-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center}
+    .pt-num{font-size:24px;font-weight:800;margin-bottom:3px}
+    .cat-grid{display:none;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+    .cat-card{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:10px 12px}
+    .cat-name{font-size:10px;font-weight:600;margin-bottom:5px}
+    .cat-bar-bg{background:var(--surface2);border-radius:2px;height:4px;overflow:hidden;margin-bottom:4px}
+    .cat-bar{height:4px;border-radius:2px;transition:width .5s}
+    .cat-stats{font-size:9px;color:var(--text3);display:flex;justify-content:space-between}
+    .v-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-bottom:10px}
+    .v-cell{border-radius:5px;padding:5px 2px;text-align:center;cursor:pointer;border:1px solid transparent;transition:all .12s}
+    .v-cell:hover{transform:scale(1.1)}
+    .v-cell.blocked{background:var(--green-bg);border-color:var(--green-border)}
+    .v-cell.passed{background:var(--red-bg);border-color:var(--red-border)}
+    .v-cell.pending{background:var(--surface2);border-color:var(--border)}
+    .v-num{font-size:7px;color:var(--text3)}
+    .v-icon{font-size:11px}
+    .v-stage{font-size:7px;color:var(--text3)}
+    .cert{display:none;background:var(--green-bg);border:1px solid var(--green-border);border-radius:12px;padding:28px;text-align:center;margin-top:14px}
+    .cert-title{font-size:20px;font-weight:800;color:var(--green);margin-bottom:6px}
+    /* api key */
+    .api-box{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:11px 14px;font-family:monospace;font-size:13px;color:var(--green);word-break:break-all;margin-bottom:10px}
+    .code-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;font-family:monospace;font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:10px}
+    .d-row{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid var(--border)}
+    .d-row:last-child{border-bottom:none}
+    .d-key{color:var(--text3)}
+    .d-val{color:var(--text);font-weight:500;font-size:11px}
+    /* detail modal */
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:300;align-items:center;justify-content:center}
+    .overlay.show{display:flex}
+    .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;width:460px;max-width:90vw;max-height:80vh;overflow-y:auto}
+    .modal-title{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+    .close-modal{background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer}
+    .close-modal:hover{color:var(--text)}
+    .d-url{font-family:monospace;font-size:10px;color:var(--text2);background:var(--surface2);border-radius:6px;padding:8px 10px;word-break:break-all;margin-bottom:12px;border:1px solid var(--border);line-height:1.5}
+    .stage-mini{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:10px}
+    .smc{text-align:center;padding:5px 2px;border-radius:4px;font-size:8px;line-height:1.4}
+    .smc.p{background:var(--green-bg);color:var(--green)}
+    .smc.f{background:var(--red-bg);color:var(--red)}
+    .smc.u{background:var(--surface2);color:var(--text3)}
+    /* tech table */
+    .tech-table{width:100%;border-collapse:collapse;font-size:11px}
+    .tech-table th{text-align:left;padding:7px 9px;color:var(--text3);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border);background:var(--surface2)}
+    .tech-table td{padding:6px 9px;border-bottom:1px solid var(--border);color:var(--text2)}
+    .tech-table tr:hover td{background:var(--surface2);cursor:pointer}
+    .tech-table tr:last-child td{border-bottom:none}
+    .tb{font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px}
+    .tb-g{background:var(--green-bg);color:var(--green)}
+    .tb-r{background:var(--red-bg);color:var(--red)}
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-track{background:var(--surface)}
+    ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+  </style>
+</head>
+<body>
+
+<div class="titlebar">
+  <div class="tb-left">
+    <div class="tb-dot"></div>
+    <span class="tb-title">Guardian Security Platform</span>
+  </div>
+  <div class="tb-controls">
+    <button class="ctrl" onclick="window.electron.minimize()">─</button>
+    <button class="ctrl" onclick="window.electron.maximize()">□</button>
+    <button class="ctrl x" onclick="window.electron.close()">✕</button>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-icon">🛡</div>
+      <div class="sb-brand">Guardian</div>
+    </div>
+    <div class="company-chip">
+      <div class="cc-name" id="sb-name">Loading...</div>
+      <div class="cc-status">
+        <div class="cc-dot off" id="sb-dot"></div>
+        <span id="sb-status" style="color:var(--text3)">Checking...</span>
+      </div>
+    </div>
+    <div class="nav-sec">Monitor</div>
+    <div class="nav-item active" id="nav-overview" onclick="showPage('overview',this)">🏠 Overview</div>
+    <div class="nav-item" id="nav-attacks" onclick="showPage('attacks',this)">🔴 Attack Log</div>
+    <div class="nav-item" id="nav-explain" onclick="showPage('explain',this)">🤖 AI Explainer</div>
+    <div class="nav-sec">Security</div>
+    <div class="nav-item" id="nav-pentest" onclick="showPage('pentest',this)">⚡ Penetration Test</div>
+    <div class="nav-sec">Account</div>
+    <div class="nav-item" id="nav-apikey" onclick="showPage('apikey',this)">🔑 API Key & Setup</div>
+    <div class="sb-bottom">
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div class="page active" id="page-overview">
+      <h2>Overview</h2>
+      <p class="page-sub" id="ov-sub">Loading...</p>
+      <div class="conn-hero off" id="conn-hero">
+        <div class="conn-icon" id="conn-icon">🔌</div>
+        <div>
+          <div class="conn-title" id="conn-title">Checking connection...</div>
+          <div class="conn-sub" id="conn-sub">Verifying Guardian SDK heartbeat</div>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-num" style="color:var(--red)" id="st-total">0</div><div class="stat-label">Total attacks blocked</div></div>
+        <div class="stat"><div class="stat-num" style="color:var(--amber)" id="st-today">0</div><div class="stat-label">Blocked today</div></div>
+        <div class="stat"><div class="stat-num" style="color:var(--purple)" id="st-type">—</div><div class="stat-label">Top attack type</div></div>
+        <div class="stat"><div class="stat-num" style="color:var(--blue)" id="st-last">—</div><div class="stat-label">Last attack</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Recent attacks <span style="font-size:10px;color:var(--text3);font-weight:400">click any to explain with AI</span></div>
+        <div id="ov-attacks"><div class="no-attacks">No attacks yet</div></div>
+      </div>
+    </div>
+
+    <!-- ATTACK LOG -->
+    <div class="page" id="page-attacks">
+      <h2>Attack Log</h2>
+      <p class="page-sub">All SSRF attacks blocked by Guardian SDK</p>
+      <div class="card">
+        <div id="attack-log"><div class="no-attacks">No attacks logged yet</div></div>
+      </div>
+    </div>
+
+    <!-- AI EXPLAINER -->
+    <div class="page" id="page-explain">
+      <h2>AI Explainer</h2>
+      <p class="page-sub">Select any attack to get an AI-powered explanation</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="card">
+          <div class="card-title">Select attack</div>
+          <div id="explain-list"><div class="no-attacks">No attacks yet</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">AI Analysis</div>
+          <div class="ai-panel ai-loading" id="ai-output">Select an attack from the list to get AI analysis...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PENETRATION TEST -->
+    <div class="page" id="page-pentest">
+      <h2>AI Penetration Test</h2>
+      <p class="page-sub">Auto-generates SSRF variants and tests your server</p>
+      <div class="pt-hero">
+        <div style="font-size:32px;margin-bottom:10px">🤖</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px">Automated Security Test</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:14px;max-width:400px;margin-left:auto;margin-right:auto">AI generates every SSRF bypass technique and tests each one through the Guardian pipeline</div>
+        <div class="pt-target" id="pt-target">Target: detecting...</div>
+        <br><br>
+        <button class="run-btn" id="pt-btn" onclick="runPentest()">🚀 Start Security Test</button>
+      </div>
+      <div class="status-bar" id="pt-status-bar" style="display:none">
+        <div class="s-dot idle" id="pt-dot"></div>
+        <div style="flex:1" id="pt-status-text">Ready</div>
+        <div id="pt-prog-text" style="color:var(--text3);font-family:monospace"></div>
+      </div>
+      <div class="prog-wrap" id="pt-prog-wrap"><div class="prog-bar" id="pt-prog-bar"></div></div>
+      <div class="pt-summary" id="pt-summary">
+        <div class="pt-sum-card"><div class="pt-num" style="color:var(--green)" id="pt-blocked">0</div><div style="font-size:10px;color:var(--text3)">Blocked ✓</div></div>
+        <div class="pt-sum-card"><div class="pt-num" style="color:var(--red)" id="pt-passed">0</div><div style="font-size:10px;color:var(--text3)">Passed ⚠</div></div>
+        <div class="pt-sum-card"><div class="pt-num" style="color:var(--blue)" id="pt-total">0</div><div style="font-size:10px;color:var(--text3)">Total tested</div></div>
+      </div>
+      <div class="cat-grid" id="pt-cats"></div>
+      <div class="card" id="pt-grid-card" style="display:none">
+        <div class="card-title">Attack grid <span style="font-size:10px;color:var(--text3);font-weight:400">click cell for details</span></div>
+        <div class="v-grid" id="pt-grid"></div>
+      </div>
+      <div class="card" id="pt-table-card" style="display:none">
+        <div class="card-title">Technique breakdown</div>
+        <table class="tech-table">
+          <thead><tr><th>#</th><th>URL</th><th>Technique</th><th>Category</th><th>Result</th><th>Stage</th></tr></thead>
+          <tbody id="pt-table"></tbody>
+        </table>
+      </div>
+      <div class="cert" id="pt-cert">
+        <div style="font-size:44px;margin-bottom:10px">🏆</div>
+        <div class="cert-title">Server Fully Protected</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:6px">All <span id="cert-count">0</span> SSRF attack variants blocked by Guardian</div>
+      </div>
+    </div>
+
+    <!-- API KEY & SETUP -->
+    <div class="page" id="page-apikey">
+      <h2>API Key & Setup</h2>
+      <p class="page-sub">Connect Guardian protection to your server</p>
+      <div class="card">
+        <div class="card-title">Your API Key</div>
+        <div class="api-box" id="ak-key">Loading...</div>
+        <div style="font-size:11px;color:var(--text3)">Keep this secret. Never commit to version control.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Installation — 2 lines</div>
+        <div class="code-box" id="ak-snippet">Loading...</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.8">
+          After adding these 2 lines to your server.js:<br>
+          ✓ All outbound URL fetches are intercepted<br>
+          ✓ SSRF attacks blocked through 7-stage pipeline<br>
+          ✓ Attacks reported to this dashboard in real time<br>
+          ✓ Attacker IP + geolocation logged automatically
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Account Details</div>
+        <div class="d-row"><span class="d-key">Company</span><span class="d-val" id="ak-company">—</span></div>
+        <div class="d-row"><span class="d-key">Email</span><span class="d-val" id="ak-email">—</span></div>
+        <div class="d-row"><span class="d-key">Plan</span><span class="d-val" style="color:var(--green)">Pro — Active</span></div>
+        <div class="d-row"><span class="d-key">Registered</span><span class="d-val" id="ak-date">—</span></div>
+        <div class="d-row" style="border:none"><span class="d-key">Website</span><span class="d-val" id="ak-site">—</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Attack detail modal -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-title">
+      Attack Detail
+      <button class="close-modal" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const PLATFORM = 'http://localhost:6000'
+const GUARDIAN = 'http://localhost:3000'
+const GROQ_KEY = process.env.GROQ_API_KEY;
+const STAGE_NAMES = ['Scheme','DNS','IP','Allowlist','Redirect','Socket','Response']
+const CAT_COLORS = {
+  'Loopback bypass':'var(--red)','Cloud metadata':'var(--amber)',
+  'Private network':'var(--purple)','Protocol switch':'var(--blue)',
+  'Redirect bypass':'#f97316','Parameter injection':'#06b6d4','DNS bypass':'#a78bfa',
+}
+const TYPE_SHORT = {
+  private_ip:'PrivIP',octal_octet:'Octal',decimal_integer:'Dec',
+  hex_octet:'Hex',ipv4_mapped_ipv6:'IPv6',loopback_alias:'Loop',
+  protocol_switch:'Proto',allowlist_violation:'Allow',invalid_url:'Invalid',
+}
+
+let company = null
+let allAttacks = []
+let ptVariants = []
+
+// ── init ──────────────────────────────────────────────────────────────────────
+async function init() {
+  const stored = sessionStorage.getItem('company')
+  if (!stored) { window.electron.navigate('login.html'); return }
+  company = JSON.parse(stored)
+
+  document.getElementById('sb-name').textContent = company.name
+  document.getElementById('ov-sub').textContent = company.name + ' · Security overview'
+  document.getElementById('pt-target').textContent = 'Target: ' + (company.website || 'http://localhost:4000') + '/api/fetch-url'
+  document.getElementById('ak-key').textContent = company.apiKey
+  document.getElementById('ak-company').textContent = company.name
+  document.getElementById('ak-email').textContent = company.email
+  document.getElementById('ak-date').textContent = new Date(company.registeredAt).toLocaleDateString()
+  document.getElementById('ak-site').textContent = company.website || '—'
+  document.getElementById('ak-snippet').innerHTML =
+    '<span style="color:var(--text3)">// server.js — add these 2 lines</span>\n' +
+    '<span style="color:#79c0ff">import</span> { protect } <span style="color:#79c0ff">from</span> <span style="color:#a5d6ff">\'guardian-sdk\'</span>\n' +
+    'app.<span style="color:#d2a8ff">use</span>(protect(<span style="color:#a5d6ff">\''+company.apiKey+'\'</span>))'
+
+  poll()
+  setInterval(poll, 3000)
+}
+
+// ── poll platform ─────────────────────────────────────────────────────────────
+async function poll() {
+  try {
+    const res = await fetch(PLATFORM + '/api/dashboard/status', { credentials: 'include' })
+    if (res.status === 401) { window.electron.navigate('login.html'); return }
+    const data = await res.json()
+
+    const c = data.connected
+    document.getElementById('conn-hero').className = 'conn-hero ' + (c ? 'on' : 'off')
+    document.getElementById('conn-icon').textContent = c ? '✅' : '🔌'
+    document.getElementById('conn-title').textContent = c
+      ? company.name + ' — Connected & Protected'
+      : company.name + ' — Not Connected'
+    document.getElementById('conn-sub').textContent = c
+      ? 'Guardian SDK active. All requests validated through 7-stage pipeline. Attacks reported here in real time.'
+      : 'Add Guardian SDK to your server to activate protection. See API Key & Setup tab.'
+    document.getElementById('sb-dot').className = 'cc-dot ' + (c ? 'on' : 'off')
+    document.getElementById('sb-status').textContent = c ? 'Connected' : 'Disconnected'
+    document.getElementById('sb-status').style.color = c ? 'var(--green)' : 'var(--text3)'
+
+    const s = data.stats
+    document.getElementById('st-total').textContent = s.totalAttacks
+    document.getElementById('st-today').textContent = s.todayAttacks
+    document.getElementById('st-type').textContent = (s.topAttackType || '—').replace(/_/g,' ').slice(0,8)
+    document.getElementById('st-last').textContent = s.lastAttack ? ago(s.lastAttack) : 'Never'
+
+    const ar = await fetch(PLATFORM + '/api/dashboard/attacks', { credentials: 'include' })
+    allAttacks = await ar.json()
+    renderAttacks()
+  } catch {}
+}
+
+// ── render attacks ────────────────────────────────────────────────────────────
+function renderAttacks() {
+  const makeItem = (a, i, onclick) => `
+    <div class="a-item" onclick="${onclick}">
+      <div class="a-ip">${a.attackerIP || '—'}</div>
+      <div class="a-type">${(a.attackType||'unknown').replace(/_/g,' ')}</div>
+      <div class="a-loc">${a.location || 'unknown'}</div>
+      <div class="a-stage">S${a.blockedAtStage||'?'}</div>
+      <div class="a-time">${ago(a.timestamp)}</div>
+    </div>`
+
+  const ov = document.getElementById('ov-attacks')
+  const log = document.getElementById('attack-log')
+  const expList = document.getElementById('explain-list')
+
+  if (!allAttacks.length) {
+    const empty = '<div class="no-attacks">No attacks yet · Server is protected</div>'
+    ov.innerHTML = empty; log.innerHTML = empty; expList.innerHTML = empty; return
+  }
+
+  ov.innerHTML = allAttacks.slice(0,5).map((a,i) => makeItem(a, i, `showDetail(${i})`)).join('')
+  log.innerHTML = allAttacks.map((a,i) => makeItem(a, i, `showDetail(${i})`)).join('')
+  expList.innerHTML = allAttacks.slice(0,10).map((a,i) => `
+    <div class="a-item" onclick="explainAttack(${i})">
+      <div class="a-ip">${a.attackerIP || '—'}</div>
+      <div class="a-type">${(a.attackType||'unknown').replace(/_/g,' ')}</div>
+      <div class="a-stage">S${a.blockedAtStage||'?'}</div>
+      <div class="a-time">${ago(a.timestamp)}</div>
+    </div>`).join('')
+}
+
+// ── show detail modal ─────────────────────────────────────────────────────────
+function showDetail(idx) {
+  const a = allAttacks[idx]
+  if (!a) return
+  const stages = STAGE_NAMES.map((name,i) => {
+    const n=i+1, p=n<a.blockedAtStage, f=n===a.blockedAtStage
+    return `<div class="smc ${p?'p':f?'f':'u'}">${p?'✓':f?'✗':'?'}<br><span style="font-size:7px">${name}</span></div>`
+  }).join('')
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="d-url">${a.url}</div>
+    <div class="d-row"><span class="d-key">Attack type</span><span class="d-val">${(a.attackType||'—').replace(/_/g,' ')}</span></div>
+    <div class="d-row"><span class="d-key">Blocked at stage</span><span class="d-val" style="color:var(--red)">Stage ${a.blockedAtStage} of 7</span></div>
+    <div class="d-row"><span class="d-key">Attacker IP</span><span class="d-val" style="font-family:monospace;color:var(--red)">${a.attackerIP||'unknown'}</span></div>
+    <div class="d-row"><span class="d-key">Location</span><span class="d-val">${a.location||'unknown'}</span></div>
+    <div class="d-row"><span class="d-key">Source</span><span class="d-val">${a.source||'sdk'}</span></div>
+    <div class="d-row"><span class="d-key">Time</span><span class="d-val">${new Date(a.timestamp).toLocaleString()}</span></div>
+    ${a.reason?`<div class="d-row"><span class="d-key">Reason</span><span class="d-val">${a.reason}</span></div>`:''}
+    <div style="font-size:10px;color:var(--text3);margin-top:10px;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em">Pipeline trace</div>
+    <div class="stage-mini">${stages}</div>`
+
+  document.getElementById('overlay').classList.add('show')
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('overlay'))
+    document.getElementById('overlay').classList.remove('show')
+}
+
+// ── AI explainer with Groq ────────────────────────────────────────────────────
+async function explainAttack(idx) {
+  const a = allAttacks[idx]
+  if (!a) return
+  showPage('explain', document.getElementById('nav-explain'))
+
+  const out = document.getElementById('ai-output')
+  out.className = 'ai-panel ai-loading'
+  out.textContent = '⏳ Asking AI to analyze this attack...'
+
+  const prompt = `You are a security expert. Analyze this SSRF attack that was blocked:
+
+URL: ${a.url}
+Attack type: ${(a.attackType||'unknown').replace(/_/g,' ')}
+Blocked at stage: ${a.blockedAtStage} of 7
+Reason: ${a.reason || 'Guardian pipeline blocked it'}
+Attacker IP: ${a.attackerIP || 'unknown'}
+Location: ${a.location || 'unknown'}
+
+Write exactly 3 short paragraphs:
+1. What the attacker was trying to do (specific technique)
+2. What data would have been stolen if it succeeded
+3. Why Guardian's stage ${a.blockedAtStage} caught it
+
+Be specific. Keep each paragraph to 2-3 sentences.`
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + GROQ_KEY,
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'user', content: prompt }],
+        stream: true,
+        max_tokens: 400,
+      }),
+    })
+
+    const reader = res.body.getReader()
+    const decoder = new TextDecoder()
+    let buf = '', text = ''
+    out.className = 'ai-panel'
+    out.textContent = ''
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buf += decoder.decode(value, { stream: true })
+      const lines = buf.split('\n'); buf = lines.pop()
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue
+        const d = line.slice(6)
+        if (d === '[DONE]') return
+        try {
+          const chunk = JSON.parse(d)
+          const delta = chunk.choices?.[0]?.delta?.content || ''
+          if (delta) { text += delta; out.textContent = text }
+        } catch {}
+      }
+    }
+  } catch (err) {
+    out.className = 'ai-panel'
+    out.textContent = 'AI explanation unavailable: ' + err.message
+  }
+}
+
+// ── Penetration test ──────────────────────────────────────────────────────────
+async function runPentest() {
+  const btn = document.getElementById('pt-btn')
+  btn.disabled = true; btn.textContent = 'Running...'
+
+  ptVariants = []
+  let blocked = 0, passed = 0
+
+  document.getElementById('pt-status-bar').style.display = 'flex'
+  document.getElementById('pt-summary').style.display = 'none'
+  document.getElementById('pt-cats').style.display = 'none'
+  document.getElementById('pt-grid-card').style.display = 'none'
+  document.getElementById('pt-table-card').style.display = 'none'
+  document.getElementById('pt-cert').style.display = 'none'
+  document.getElementById('pt-grid').innerHTML = ''
+  document.getElementById('pt-table').innerHTML = ''
+
+  setStatus('run', 'Generating attack variants...')
+  document.getElementById('pt-prog-wrap').style.display = 'block'
+
+  const target = (company?.website || 'http://localhost:4000') + '/api/fetch-url'
+
+  try {
+    const res = await fetch(GUARDIAN + '/api/pentest', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ targetUrl: target }),
+    })
+
+    const reader = res.body.getReader()
+    const decoder = new TextDecoder()
+    let buf = ''
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buf += decoder.decode(value, { stream: true })
+      const lines = buf.split('\n'); buf = lines.pop()
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue
+        try {
+          const d = JSON.parse(line.slice(6))
+          if (d.type === 'status') { setStatus('run', d.message) }
+          else if (d.type === 'total') {
+            renderPending(d.total)
+            document.getElementById('pt-summary').style.display = 'grid'
+            document.getElementById('pt-grid-card').style.display = 'block'
+            document.getElementById('pt-table-card').style.display = 'block'
+          }
+          else if (d.type === 'result') {
+            ptVariants.push(d)
+            if (d.blocked) blocked++; else passed++
+            const pct = ((d.index+1)/d.total*100).toFixed(0)
+            document.getElementById('pt-prog-bar').style.width = pct + '%'
+            document.getElementById('pt-prog-text').textContent = d.index+1+'/'+d.total
+            setStatus('run', 'Testing: ' + d.technique)
+            document.getElementById('pt-blocked').textContent = blocked
+            document.getElementById('pt-passed').textContent = passed
+            document.getElementById('pt-total').textContent = ptVariants.length
+            updateCell(d.index, d)
+            addRow(d)
+            updateCats()
+          }
+          else if (d.type === 'complete') {
+            setStatus('done', d.message)
+            document.getElementById('pt-prog-text').textContent = ''
+            document.getElementById('pt-prog-bar').style.width = '100%'
+            btn.disabled = false; btn.textContent = '🚀 Run Again'
+            if (passed === 0 && blocked > 0) {
+              document.getElementById('pt-cert').style.display = 'block'
+              document.getElementById('cert-count').textContent = blocked
+            }
+          }
+          else if (d.type === 'error') {
+            setStatus('err', 'Error: ' + d.message)
+            btn.disabled = false; btn.textContent = '🚀 Start Security Test'
+          }
+        } catch {}
+      }
+    }
+  } catch (err) {
+    setStatus('err', 'Failed: ' + err.message)
+    btn.disabled = false; btn.textContent = '🚀 Start Security Test'
+  }
+}
+
+function setStatus(state, text) {
+  document.getElementById('pt-dot').className = 's-dot ' + state
+  document.getElementById('pt-status-text').textContent = text
+}
+
+function renderPending(total) {
+  document.getElementById('pt-grid').innerHTML = Array.from({length:total},(_,i) =>
+    `<div class="v-cell pending" id="ptcell-${i}">
+      <div class="v-num">${i+1}</div><div class="v-icon" style="color:var(--text3)">·</div>
+      <div class="v-stage">—</div></div>`).join('')
+}
+
+function updateCell(idx, d) {
+  const cell = document.getElementById('ptcell-'+idx)
+  if (!cell) return
+  const color = d.blocked ? 'var(--green)' : 'var(--red)'
+  cell.className = 'v-cell ' + (d.blocked ? 'blocked' : 'passed')
+  cell.innerHTML = `<div class="v-num">${idx+1}</div>
+    <div class="v-icon" style="color:${color}">${d.blocked?'✓':'✗'}</div>
+    <div class="v-stage" style="color:${color}">${d.blocked?'S'+d.blockedAtStage:'!'}</div>`
+  cell.onclick = () => showPtDetail(idx)
+}
+
+function addRow(d) {
+  const short = d.url.length > 40 ? d.url.slice(0,40)+'…' : d.url
+  const color = CAT_COLORS[d.category] || 'var(--text2)'
+  document.getElementById('pt-table').innerHTML += `
+    <tr onclick="showPtDetail(${d.index})">
+      <td style="color:var(--text3)">${d.index+1}</td>
+      <td><span style="font-family:monospace;font-size:10px" title="${d.url}">${short}</span></td>
+      <td>${d.technique}</td>
+      <td style="color:${color};font-size:10px">${d.category}</td>
+      <td><span class="tb ${d.blocked?'tb-g':'tb-r'}">${d.blocked?'BLOCKED':'PASSED'}</span></td>
+      <td style="color:var(--text3)">${d.blocked?'S'+d.blockedAtStage:'—'}</td>
+    </tr>`
+}
+
+function updateCats() {
+  const cats = {}
+  ptVariants.forEach(v => {
+    if (!cats[v.category]) cats[v.category] = {total:0,blocked:0}
+    cats[v.category].total++
+    if (v.blocked) cats[v.category].blocked++
+  })
+  const grid = document.getElementById('pt-cats')
+  grid.style.display = 'grid'
+  grid.innerHTML = Object.entries(cats).map(([cat, d]) => {
+    const pct = d.total ? (d.blocked/d.total*100) : 0
+    const color = CAT_COLORS[cat] || 'var(--green)'
+    return `<div class="cat-card">
+      <div class="cat-name" style="color:${color}">${cat}</div>
+      <div class="cat-bar-bg"><div class="cat-bar" style="width:${pct}%;background:${color}"></div></div>
+      <div class="cat-stats"><span>${d.blocked}/${d.total}</span><span>${pct.toFixed(0)}%</span></div>
+    </div>`
+  }).join('')
+}
+
+function showPtDetail(idx) {
+  const d = ptVariants[idx]
+  if (!d) return
+  const stages = STAGE_NAMES.map((name,i) => {
+    const n=i+1, p=d.blocked&&n<d.blockedAtStage, f=d.blocked&&n===d.blockedAtStage
+    return `<div class="smc ${p?'p':f?'f':'u'}">${p?'✓':f?'✗':'?'}<br><span style="font-size:7px">${name}</span></div>`
+  }).join('')
+
+  document.getElementById('modal-body').innerHTML = `
+    <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:10px;background:${d.blocked?'var(--green-bg)':'var(--red-bg)'};border:1px solid ${d.blocked?'var(--green-border)':'var(--red-border)'};color:${d.blocked?'var(--green)':'var(--red)'}">
+      ${d.blocked ? '✓ BLOCKED' : '✗ PASSED'}
+    </div>
+    <div class="d-url">${d.url}</div>
+    <div class="d-row"><span class="d-key">Technique</span><span class="d-val">${d.technique}</span></div>
+    <div class="d-row"><span class="d-key">Category</span><span class="d-val" style="color:${CAT_COLORS[d.category]||'var(--text)'}">${d.category}</span></div>
+    ${d.blocked ? `
+      <div class="d-row"><span class="d-key">Attack type</span><span class="d-val">${(d.attackType||'—').replace(/_/g,' ')}</span></div>
+      <div class="d-row" style="border:none"><span class="d-key">Blocked at</span><span class="d-val" style="color:var(--red)">Stage ${d.blockedAtStage} of 7</span></div>
+    ` : `<div class="d-row" style="border:none"><span class="d-key">Status</span><span class="d-val" style="color:var(--red)">Not blocked</span></div>`}
+    <div style="font-size:10px;color:var(--text3);margin-top:10px;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em">Pipeline trace</div>
+    <div class="stage-mini">${stages}</div>`
+
+  document.getElementById('overlay').classList.add('show')
+}
+
+// ── helpers ───────────────────────────────────────────────────────────────────
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
+  document.getElementById('page-'+name).classList.add('active')
+  if (el) el.classList.add('active')
+}
+
+async function logout() {
+  await fetch(PLATFORM + '/api/logout', { method:'POST', credentials:'include' }).catch(()=>{})
+  sessionStorage.clear()
+  window.electron.navigate('login.html')
+}
+
+function ago(ts) {
+  const d = Date.now() - new Date(ts).getTime()
+  if (d < 60000) return Math.floor(d/1000) + 's ago'
+  if (d < 3600000) return Math.floor(d/60000) + 'm ago'
+  return Math.floor(d/3600000) + 'h ago'
+}
+
+init()
+</script>
+</body>
+</html>

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TechNot Corp — Admin</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:#f1f5f9;min-height:100vh}
+    nav{background:#0f172a;padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+    .brand{color:#fff;font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px}
+    .brand-dot{width:8px;height:8px;border-radius:50%;background:#3b82f6}
+    .admin-tag{background:#ef4444;color:#fff;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:700;margin-left:8px}
+    .nav-right{display:flex;align-items:center;gap:16px}
+    .nav-user{color:#94a3b8;font-size:14px}
+    .logout-btn{background:transparent;border:1px solid #334155;color:#94a3b8;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px}
+    .logout-btn:hover{background:#1e293b;color:#fff}
+    .sidebar{position:fixed;left:0;top:60px;width:220px;height:calc(100vh - 60px);background:#fff;border-right:1px solid #e2e8f0;padding:20px 0;overflow-y:auto}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:11px 20px;color:#64748b;cursor:pointer;font-size:14px;transition:all .15s}
+    .nav-item:hover{background:#f8fafc;color:#1e293b}
+    .nav-item.active{background:#eff6ff;color:#1d4ed8;font-weight:600;border-right:3px solid #1d4ed8}
+    .nav-item.sec.active{background:#fef2f2;color:#dc2626;border-right-color:#dc2626}
+    .nav-item.sec:hover{background:#fef2f2;color:#dc2626}
+    .nav-section{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;padding:14px 20px 6px}
+    .main{margin-left:220px;padding:28px 32px}
+    .page{display:none}.page.active{display:block}
+    h2{font-size:20px;font-weight:700;color:#0f172a;margin-bottom:6px}
+    .page-sub{font-size:14px;color:#64748b;margin-bottom:24px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+    .stat-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+    .stat-num{font-size:28px;font-weight:800;margin-bottom:4px}
+    .stat-label{font-size:12px;color:#64748b}
+    .card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:20px}
+    .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .card-title{font-size:15px;font-weight:600;color:#0f172a}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{text-align:left;padding:10px 12px;background:#f8fafc;color:#64748b;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.04em}
+    td{padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#374151}
+    tr:last-child td{border-bottom:none}
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+    .badge-blue{background:#eff6ff;color:#1d4ed8}
+    .badge-green{background:#f0fdf4;color:#16a34a}
+    .badge-red{background:#fef2f2;color:#dc2626}
+    .btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+    .btn:hover{opacity:.85}
+    .btn-blue{background:#1d4ed8;color:#fff}
+    .btn-red{background:#ef4444;color:#fff}
+    .btn-green{background:#16a34a;color:#fff}
+    .btn-outline{background:transparent;border:1.5px solid #e2e8f0;color:#374151}
+    .btn-sm{padding:5px 10px;font-size:11px}
+    .btn-del{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center}
+    .modal-bg.show{display:flex}
+    .modal{background:#fff;border-radius:16px;padding:32px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto}
+    .modal h3{font-size:18px;font-weight:700;margin-bottom:20px;color:#0f172a}
+    .form-row{margin-bottom:14px}
+    .form-row label{display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.04em}
+    .form-row input,.form-row select{width:100%;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;outline:none;transition:border-color .15s}
+    .form-row input:focus,.form-row select:focus{border-color:#3b82f6}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .modal-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+    .btn-cancel{background:#f1f5f9;color:#64748b;padding:9px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none}
+    .payroll-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .payroll-card{background:#f8fafc;border-radius:10px;padding:18px;border:1px solid #e2e8f0}
+    .payroll-name{font-size:14px;font-weight:600;color:#1e293b;margin-bottom:3px}
+    .payroll-dept{font-size:12px;color:#64748b;margin-bottom:10px}
+    .payroll-salary{font-size:22px;font-weight:800;color:#1d4ed8;margin-bottom:2px}
+    .payroll-label{font-size:10px;color:#94a3b8}
+    .payroll-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+    .dept-chart{display:flex;flex-direction:column;gap:8px}
+    .dept-row{display:flex;align-items:center;gap:10px;font-size:13px}
+    .dept-bar-wrap{flex:1;background:#f1f5f9;border-radius:4px;height:8px;overflow:hidden}
+    .dept-bar{height:8px;border-radius:4px;background:#3b82f6;transition:width .5s}
+    .dept-label{width:90px;color:#374151;font-weight:500;font-size:12px}
+    .dept-count{width:24px;text-align:right;color:#64748b;font-size:12px}
+    .activity-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9}
+    .activity-item:last-child{border-bottom:none}
+    .activity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .activity-text{font-size:13px;color:#374151;flex:1}
+    .activity-time{font-size:11px;color:#94a3b8}
+    .search-bar{width:100%;padding:9px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;outline:none;margin-bottom:14px}
+    .search-bar:focus{border-color:#3b82f6}
+    .empty-state{text-align:center;padding:40px;color:#94a3b8;font-size:14px}
+
+    /* ── Security tabs ─────────────────────────────────── */
+    .sec-tabs{display:flex;gap:8px;margin-bottom:24px;border-bottom:2px solid #e2e8f0;padding-bottom:0}
+    .sec-tab{padding:10px 20px;font-size:13px;font-weight:600;color:#64748b;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+    .sec-tab.active{color:#dc2626;border-bottom-color:#dc2626}
+    .sec-tab:hover{color:#1e293b}
+    .sec-panel{display:none}.sec-panel.active{display:block}
+
+    /* pentest */
+    .pentest-hero{background:linear-gradient(135deg,#0f172a,#1e3a5f);border-radius:16px;padding:32px;color:#fff;margin-bottom:20px;text-align:center}
+    .pentest-hero h3{font-size:22px;font-weight:800;margin-bottom:8px}
+    .pentest-hero p{font-size:14px;color:#94a3b8;margin-bottom:24px;max-width:480px;margin-left:auto;margin-right:auto}
+    .run-btn{background:#ef4444;color:#fff;padding:14px 36px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s}
+    .run-btn:hover{background:#dc2626;transform:scale(1.02)}
+    .run-btn:disabled{background:#475569;cursor:not-allowed;transform:none}
+    .pentest-status{font-size:13px;color:#94a3b8;margin-top:12px;min-height:20px}
+    .pentest-progress{background:#1e293b;border-radius:8px;height:6px;margin-top:12px;overflow:hidden;display:none}
+    .pentest-progress-bar{height:6px;background:#ef4444;border-radius:8px;width:0%;transition:width .3s}
+    .result-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+    .result-summary-card{border-radius:12px;padding:18px;text-align:center}
+    .rs-blocked{background:#f0fdf4;border:1px solid #86efac}
+    .rs-passed{background:#fef2f2;border:1px solid #fecaca}
+    .rs-total{background:#f8fafc;border:1px solid #e2e8f0}
+    .rs-num{font-size:32px;font-weight:800;margin-bottom:4px}
+    .rs-label{font-size:12px;color:#64748b}
+    .variant-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-bottom:16px}
+    .v-cell{border-radius:5px;padding:5px 3px;text-align:center;cursor:pointer;border:1px solid transparent;transition:all .12s}
+    .v-cell:hover{transform:scale(1.1)}
+    .v-cell.blocked{background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.3)}
+    .v-cell.passed{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.3)}
+    .v-cell.pending{background:#f1f5f9;border-color:#e2e8f0}
+    .v-label{font-size:8px;font-weight:700}
+    .v-stage{font-size:7px;color:#94a3b8}
+    .v-detail{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-top:8px;font-size:12px}
+    .v-detail .mono{font-family:monospace;font-size:11px;color:#374151;word-break:break-all;margin-bottom:6px}
+    .cert-box{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2px solid #86efac;border-radius:16px;padding:28px;text-align:center}
+    .cert-icon{font-size:48px;margin-bottom:12px}
+    .cert-title{font-size:20px;font-weight:800;color:#15803d;margin-bottom:8px}
+    .cert-sub{font-size:14px;color:#16a34a}
+
+    /* attack log */
+    .attack-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fef2f2;border-radius:8px;margin-bottom:6px;border:1px solid #fecaca;font-size:12px}
+    .attack-ip{font-family:monospace;color:#dc2626;font-weight:700}
+    .attack-type{color:#64748b;flex:1}
+    .attack-loc{background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
+    .attack-stage{background:#fef2f2;color:#dc2626;padding:2px 6px;border-radius:4px;font-size:10px;border:1px solid #fecaca}
+    .attack-time{color:#94a3b8;font-size:11px;white-space:nowrap}
+    .no-attacks{text-align:center;padding:32px;color:#94a3b8;font-size:14px}
+
+    /* vulnerability scanner */
+    .scanner-wrap{background:#0f172a;border-radius:16px;overflow:hidden}
+    .scanner-header{padding:20px 24px;border-bottom:1px solid #1e293b;display:flex;align-items:center;justify-content:space-between}
+    .scanner-title{color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+    .scanner-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e}
+    .scanner-body{padding:20px 24px}
+    .scanner-input-row{display:flex;gap:10px;margin-bottom:16px}
+    .scanner-input{flex:1;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:10px 14px;color:#e2e8f0;font-size:13px;font-family:monospace;outline:none}
+    .scanner-input:focus{border-color:#3b82f6}
+    .scan-btn{background:#22c55e;color:#000;padding:10px 20px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
+    .scan-btn:disabled{background:#334155;color:#64748b;cursor:not-allowed}
+    .scan-status{font-size:12px;color:#64748b;margin-bottom:12px;min-height:16px}
+    .scan-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+    .scan-stat{background:#1e293b;border-radius:8px;padding:12px;text-align:center}
+    .scan-stat-num{font-size:22px;font-weight:800;margin-bottom:2px}
+    .scan-stat-label{font-size:10px;color:#64748b}
+    .scan-results{display:flex;flex-direction:column;gap:4px;max-height:320px;overflow-y:auto}
+    .scan-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-size:11px;cursor:pointer}
+    .scan-item.vuln{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2)}
+    .scan-item.safe{background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.1)}
+    .scan-item.err{background:rgba(100,116,139,0.1);border:1px solid rgba(100,116,139,0.15)}
+    .scan-url{font-family:monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e2e8f0}
+    .scan-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;flex-shrink:0}
+    .sb-vuln{background:#ef4444;color:#fff}
+    .sb-safe{background:#22c55e;color:#000}
+    .sb-err{background:#475569;color:#fff}
+    .scan-detail{background:#1e293b;border-radius:8px;padding:12px;margin-top:8px;font-size:11px;color:#94a3b8;word-break:break-all}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">
+    <div class="brand-dot"></div>TechNot Corp
+    <span class="admin-tag">ADMIN</span>
+  </div>
+  <div class="nav-right">
+    <span class="nav-user" id="nav-name">Loading...</span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="sidebar">
+  <div class="nav-section">Main</div>
+  <div class="nav-item active" id="nav-overview" onclick="showPage('overview',this)">🏠 Overview</div>
+  <div class="nav-section">Management</div>
+  <div class="nav-item" id="nav-employees" onclick="showPage('employees',this)">👥 Employees</div>
+  <div class="nav-item" id="nav-payroll" onclick="showPage('payroll',this)">💰 Payroll</div>
+  <div class="nav-item" id="nav-documents" onclick="showPage('documents',this)">📁 Documents</div>
+  <div class="nav-item" id="nav-company" onclick="showPage('company',this)">🏢 Company Info</div>
+  <div class="nav-section">Security</div>
+<div class="nav-item sec" onclick="window.open('/pentest.html','_blank')">🤖 Penetration Tester</div>
+</div>
+
+<div class="main">
+
+  <!-- OVERVIEW -->
+  <div class="page active" id="page-overview">
+    <h2>Admin Dashboard</h2>
+    <p class="page-sub">TechNot Corp · Company overview</p>
+    <div class="stats">
+      <div class="stat-card"><div class="stat-num" style="color:#3b82f6" id="ov-emp">—</div><div class="stat-label">Total employees</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#22c55e" id="ov-payroll">—</div><div class="stat-label">Monthly payroll</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#f59e0b" id="ov-docs">—</div><div class="stat-label">Documents</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#8b5cf6" id="ov-depts">—</div><div class="stat-label">Departments</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">Employees by Department</div>
+        <div class="dept-chart" id="dept-chart"></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px">Recent Activity</div>
+        <div id="activity-feed">
+          <div class="activity-item"><div class="activity-dot" style="background:#22c55e"></div><div class="activity-text">System initialized</div><div class="activity-time">Just now</div></div>
+          <div class="activity-item"><div class="activity-dot" style="background:#3b82f6"></div><div class="activity-text">Admin logged in</div><div class="activity-time">Just now</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Recent Employees</div>
+        <button class="btn btn-blue btn-sm" onclick="showPage('employees',document.getElementById('nav-employees'))">View all</button>
+      </div>
+      <table>
+        <thead><tr><th>Name</th><th>Department</th><th>Role</th><th>Salary</th><th>Joined</th></tr></thead>
+        <tbody id="ov-emp-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EMPLOYEES -->
+  <div class="page" id="page-employees">
+    <h2>Employee Management</h2>
+    <p class="page-sub">Add, edit and manage all employees</p>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">All Employees (<span id="emp-count">0</span>)</div>
+        <button class="btn btn-blue" onclick="openModal('add-modal')">+ Add Employee</button>
+      </div>
+      <input class="search-bar" id="emp-search" placeholder="Search by name, email or department..." oninput="renderEmployees()"/>
+      <table>
+        <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Department</th><th>Role</th><th>Salary</th><th>Joined</th><th>Actions</th></tr></thead>
+        <tbody id="emp-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PAYROLL -->
+  <div class="page" id="page-payroll">
+    <h2>Payroll Management</h2>
+    <p class="page-sub">Monthly salary overview</p>
+    <div class="payroll-summary">
+      <div class="stat-card"><div class="stat-num" style="color:#1d4ed8" id="pay-total">—</div><div class="stat-label">Total monthly payroll</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#22c55e" id="pay-avg">—</div><div class="stat-label">Average salary</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#f59e0b" id="pay-highest">—</div><div class="stat-label">Highest salary</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:18px">Salary Breakdown</div>
+      <div class="payroll-grid" id="payroll-grid"></div>
+    </div>
+  </div>
+
+  <!-- DOCUMENTS -->
+  <div class="page" id="page-documents">
+    <h2>Document Manager</h2>
+    <p class="page-sub">Upload and manage company documents</p>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">All Documents (<span id="doc-count">0</span>)</div>
+        <button class="btn btn-blue" onclick="openModal('doc-modal')">+ Upload Document</button>
+      </div>
+      <table>
+        <thead><tr><th>Name</th><th>Size</th><th>Uploaded by</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody id="docs-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- COMPANY -->
+  <div class="page" id="page-company">
+    <h2>Company Information</h2>
+    <p class="page-sub">TechNot Corp · Official details</p>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:20px">Company Details</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div>
+          <div style="font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;margin-bottom:5px">Company Name</div>
+          <div style="font-size:16px;font-weight:700;margin-bottom:16px" id="co-name">—</div>
+          <div style="font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;margin-bottom:5px">Founded</div>
+          <div style="font-size:16px;font-weight:700;margin-bottom:16px" id="co-founded">—</div>
+          <div style="font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;margin-bottom:5px">Industry</div>
+          <div style="font-size:16px;font-weight:700" id="co-industry">—</div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;margin-bottom:5px">Headquarters</div>
+          <div style="font-size:16px;font-weight:700;margin-bottom:16px" id="co-hq">—</div>
+          <div style="font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;margin-bottom:5px">Revenue</div>
+          <div style="font-size:16px;font-weight:700;margin-bottom:16px" id="co-revenue">—</div>
+          <div style="font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;margin-bottom:5px">Employees</div>
+          <div style="font-size:16px;font-weight:700" id="co-emp">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:16px">Salary by Department</div>
+      <table>
+        <thead><tr><th>Department</th><th>Employees</th><th>Total Salary</th><th>Avg Salary</th></tr></thead>
+        <tbody id="dept-salary-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── SECURITY CENTER ───────────────────────────────────────────── -->
+  <div class="page" id="page-security">
+    <h2>🛡 Security Center</h2>
+    <p class="page-sub">AI-powered SSRF protection · Penetration testing · Vulnerability scanning</p>
+
+    <!-- Security sub-tabs -->
+    <div class="sec-tabs">
+      <div class="sec-tab active" id="stab-pentest" onclick="showSecTab('pentest',this)">🤖 AI Penetration Test</div>
+      <div class="sec-tab" id="stab-attacks" onclick="showSecTab('attacks',this)">🔴 Live Attack Log</div>
+      <div class="sec-tab" id="stab-scanner" onclick="showSecTab('scanner',this)">🔍 Vulnerability Scanner</div>
+    </div>
+
+    <!-- TAB 1: AI Penetration Test -->
+    <div class="sec-panel active" id="spanel-pentest">
+      <div class="pentest-hero">
+        <h3>🤖 AI-Powered Penetration Test</h3>
+        <p>Our AI generates every known SSRF bypass technique targeting your server, then tests each one to prove Guardian blocks them all.</p>
+        <button class="run-btn" id="run-pentest-btn" onclick="runPentest()">
+          Run Security Test
+        </button>
+        <div class="pentest-status" id="pentest-status">Click to start automated penetration test</div>
+        <div class="pentest-progress" id="pentest-progress">
+          <div class="pentest-progress-bar" id="pentest-bar"></div>
+        </div>
+      </div>
+
+      <!-- Results (hidden until test runs) -->
+      <div id="pentest-results" style="display:none">
+        <div class="result-summary">
+          <div class="result-summary-card rs-blocked">
+            <div class="rs-num" style="color:#16a34a" id="res-blocked">0</div>
+            <div class="rs-label">Variants blocked ✓</div>
+          </div>
+          <div class="result-summary-card rs-passed">
+            <div class="rs-num" style="color:#dc2626" id="res-passed">0</div>
+            <div class="rs-label">Variants passed ⚠</div>
+          </div>
+          <div class="result-summary-card rs-total">
+            <div class="rs-num" style="color:#374151" id="res-total">0</div>
+            <div class="rs-label">Total tested</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Attack variant grid — click any cell for details</div>
+            <div id="grid-legend" style="display:flex;gap:10px;font-size:11px">
+              <span style="color:#16a34a">■ Blocked</span>
+              <span style="color:#dc2626">■ Passed</span>
+              <span style="color:#94a3b8">■ Pending</span>
+            </div>
+          </div>
+          <div class="variant-grid" id="variant-grid"></div>
+          <div class="v-detail" id="v-detail" style="display:none"></div>
+        </div>
+
+        <!-- Certificate -->
+        <div class="cert-box" id="cert-box" style="display:none">
+          <div class="cert-icon">🏆</div>
+          <div class="cert-title">Server Security Verified</div>
+          <div class="cert-sub">All <span id="cert-count">0</span> SSRF attack variants successfully blocked by Guardian</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: Live Attack Log -->
+    <div class="sec-panel" id="spanel-attacks">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Live Attack Feed</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 5px #22c55e"></div>
+            <span style="font-size:12px;color:#64748b">Live · updates every 2s</span>
+          </div>
+        </div>
+        <div id="live-attack-log">
+          <div class="no-attacks">No attacks detected yet · Try submitting a malicious URL from the employee portal</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: Vulnerability Scanner -->
+    <div class="sec-panel" id="spanel-scanner">
+      <div class="scanner-wrap">
+        <div class="scanner-header">
+          <div class="scanner-title">
+            <div class="scanner-dot"></div>
+            SSRF Vulnerability Scanner
+          </div>
+          <span style="font-size:11px;color:#64748b">Powered by Guardian AI</span>
+        </div>
+        <div class="scanner-body">
+          <div style="font-size:13px;color:#94a3b8;margin-bottom:14px">
+            Enter any domain to scan for SSRF-vulnerable endpoints. The AI generates test URLs and probes each one.
+          </div>
+          <div class="scanner-input-row">
+            <input class="scanner-input" id="scan-domain" placeholder="https://vvce.ac.in" />
+            <button class="scan-btn" id="scan-btn" onclick="runScanner()">Scan Domain</button>
+          </div>
+          <div class="scan-status" id="scan-status"></div>
+          <div class="scan-stats" id="scan-stats" style="display:none">
+            <div class="scan-stat"><div class="scan-stat-num" style="color:#ef4444" id="ss-vuln">0</div><div class="scan-stat-label">Vulnerable</div></div>
+            <div class="scan-stat"><div class="scan-stat-num" style="color:#22c55e" id="ss-safe">0</div><div class="scan-stat-label">Safe</div></div>
+            <div class="scan-stat"><div class="scan-stat-num" style="color:#64748b" id="ss-err">0</div><div class="scan-stat-label">Errors</div></div>
+          </div>
+          <div class="scan-results" id="scan-results"></div>
+          <div class="scan-detail" id="scan-detail" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+  </div><!-- end security -->
+
+</div><!-- end main -->
+
+<!-- ADD EMPLOYEE MODAL -->
+<div class="modal-bg" id="add-modal">
+  <div class="modal">
+    <h3>Add New Employee</h3>
+    <div class="form-grid">
+      <div class="form-row"><label>Full Name *</label><input id="f-name" placeholder="Rahul Kumar"/></div>
+      <div class="form-row"><label>Email *</label><input id="f-email" type="email" placeholder="rahul@technotcorp.com"/></div>
+      <div class="form-row"><label>Password</label><input id="f-pass" type="password" placeholder="pass123"/></div>
+      <div class="form-row"><label>Phone</label><input id="f-phone" placeholder="+91 98765 43210"/></div>
+      <div class="form-row"><label>Department *</label>
+        <select id="f-dept"><option>Engineering</option><option>HR</option><option>Sales</option><option>Marketing</option><option>Management</option><option>Finance</option><option>Operations</option></select>
+      </div>
+      <div class="form-row"><label>Role</label>
+        <select id="f-role"><option value="employee">Employee</option><option value="admin">Admin</option></select>
+      </div>
+      <div class="form-row"><label>Salary (₹) *</label><input id="f-salary" type="number" placeholder="60000"/></div>
+      <div class="form-row"><label>Join Date</label><input id="f-joined" type="date"/></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('add-modal')">Cancel</button>
+      <button class="btn btn-blue" onclick="addEmployee()">Add Employee</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD DOC MODAL -->
+<div class="modal-bg" id="doc-modal">
+  <div class="modal">
+    <h3>Upload Document</h3>
+    <div class="form-row"><label>Document Name *</label><input id="d-name" placeholder="Q4 Report 2024.pdf"/></div>
+    <div class="form-row"><label>File Size</label><input id="d-size" placeholder="2.4 MB"/></div>
+    <div class="form-row"><label>URL / Link</label><input id="d-url" placeholder="https://drive.google.com/..."/></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal('doc-modal')">Cancel</button>
+      <button class="btn btn-blue" onclick="addDocument()">Upload</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let employees = [], documents = []
+
+// ── init ──────────────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    const res = await fetch('/api/me')
+    if (!res.ok) { window.location.href='/login.html'; return }
+    const me = await res.json()
+    if (me.role !== 'admin') { window.location.href='/employee.html'; return }
+    document.getElementById('nav-name').textContent = me.name
+    await loadAll()
+    // Attack monitoring moved to Guardian Desktop App
+  } catch { window.location.href='/login.html' }
+}
+
+async function loadAll() {
+  await Promise.all([loadEmployees(), loadDocuments(), loadCompany()])
+}
+
+// ── employees ─────────────────────────────────────────────────────────────────
+async function loadEmployees() {
+  const res = await fetch('/api/employees')
+  employees = await res.json()
+  renderEmployees(); renderOverview(); renderPayroll(); renderDeptSalary()
+}
+
+function renderEmployees() {
+  const q = document.getElementById('emp-search')?.value?.toLowerCase() || ''
+  const f = employees.filter(e =>
+    e.name.toLowerCase().includes(q) ||
+    e.email.toLowerCase().includes(q) ||
+    e.department.toLowerCase().includes(q)
+  )
+  document.getElementById('emp-count').textContent = f.length
+  document.getElementById('emp-table').innerHTML = f.length
+    ? f.map(e=>`<tr>
+        <td style="font-family:monospace;font-size:11px;color:#94a3b8">${e.id}</td>
+        <td style="font-weight:600">${e.name}</td>
+        <td style="color:#64748b;font-size:12px">${e.email}</td>
+        <td>${e.department}</td>
+        <td><span class="badge ${e.role==='admin'?'badge-blue':'badge-green'}">${e.role}</span></td>
+        <td style="font-weight:600">₹${e.salary.toLocaleString()}</td>
+        <td style="color:#94a3b8;font-size:12px">${e.joined}</td>
+        <td><button class="btn btn-del btn-sm" onclick="deleteEmployee('${e.id}')">Delete</button></td>
+      </tr>`).join('')
+    : '<tr><td colspan="8"><div class="empty-state">No employees found</div></td></tr>'
+}
+
+function renderOverview() {
+  const total = employees.reduce((s,e)=>s+e.salary,0)
+  const depts = [...new Set(employees.map(e=>e.department))]
+  document.getElementById('ov-emp').textContent = employees.length
+  document.getElementById('ov-payroll').textContent = '₹'+(total/100000).toFixed(1)+'L'
+  document.getElementById('ov-depts').textContent = depts.length
+
+  const dc = {}
+  employees.forEach(e=>dc[e.department]=(dc[e.department]||0)+1)
+  const mx = Math.max(...Object.values(dc))
+  document.getElementById('dept-chart').innerHTML = Object.entries(dc).sort((a,b)=>b[1]-a[1]).map(([d,c])=>`
+    <div class="dept-row">
+      <div class="dept-label">${d}</div>
+      <div class="dept-bar-wrap"><div class="dept-bar" style="width:${(c/mx)*100}%"></div></div>
+      <div class="dept-count">${c}</div>
+    </div>`).join('')
+
+  document.getElementById('ov-emp-table').innerHTML = employees.slice(0,5).map(e=>`
+    <tr>
+      <td style="font-weight:600">${e.name}</td><td>${e.department}</td>
+      <td><span class="badge ${e.role==='admin'?'badge-blue':'badge-green'}">${e.role}</span></td>
+      <td>₹${e.salary.toLocaleString()}</td><td style="color:#94a3b8;font-size:12px">${e.joined}</td>
+    </tr>`).join('')
+}
+
+function renderPayroll() {
+  const total = employees.reduce((s,e)=>s+e.salary,0)
+  document.getElementById('pay-total').textContent='₹'+total.toLocaleString()
+  document.getElementById('pay-avg').textContent='₹'+Math.round(total/employees.length).toLocaleString()
+  document.getElementById('pay-highest').textContent='₹'+Math.max(...employees.map(e=>e.salary)).toLocaleString()
+  document.getElementById('payroll-grid').innerHTML = employees.sort((a,b)=>b.salary-a.salary).map(e=>`
+    <div class="payroll-card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1d4ed8,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;flex-shrink:0">${e.name[0]}</div>
+        <div><div class="payroll-name">${e.name}</div><div class="payroll-dept">${e.department}</div></div>
+      </div>
+      <div class="payroll-salary">₹${e.salary.toLocaleString()}</div>
+      <div class="payroll-label">per month</div>
+    </div>`).join('')
+}
+
+function renderDeptSalary() {
+  const dm = {}
+  employees.forEach(e=>{if(!dm[e.department])dm[e.department]={count:0,total:0};dm[e.department].count++;dm[e.department].total+=e.salary})
+  document.getElementById('dept-salary-table').innerHTML = Object.entries(dm).map(([d,v])=>`
+    <tr><td style="font-weight:600">${d}</td><td>${v.count}</td>
+    <td style="font-weight:600;color:#1d4ed8">₹${v.total.toLocaleString()}</td>
+    <td>₹${Math.round(v.total/v.count).toLocaleString()}</td></tr>`).join('')
+}
+
+// ── documents ─────────────────────────────────────────────────────────────────
+async function loadDocuments() {
+  const res = await fetch('/api/documents')
+  documents = await res.json()
+  document.getElementById('ov-docs').textContent = documents.length
+  document.getElementById('doc-count').textContent = documents.length
+  document.getElementById('docs-table').innerHTML = documents.length
+    ? documents.map(d=>`<tr>
+        <td>📄 <strong>${d.name}</strong></td>
+        <td style="color:#64748b">${d.size}</td>
+        <td style="font-family:monospace;font-size:11px;color:#94a3b8">${d.uploadedBy}</td>
+        <td style="color:#94a3b8;font-size:12px">${d.date}</td>
+        <td><button class="btn btn-del btn-sm" onclick="deleteDoc('${d.id}')">Delete</button></td>
+      </tr>`).join('')
+    : '<tr><td colspan="5"><div class="empty-state">No documents yet</div></td></tr>'
+}
+
+// ── company ───────────────────────────────────────────────────────────────────
+async function loadCompany() {
+  const res = await fetch('/api/company')
+  const co = await res.json()
+  document.getElementById('co-name').textContent = co.name
+  document.getElementById('co-founded').textContent = co.founded
+  document.getElementById('co-hq').textContent = co.headquarters
+  document.getElementById('co-industry').textContent = co.industry
+  document.getElementById('co-revenue').textContent = co.revenue
+  document.getElementById('co-emp').textContent = employees.length + ' employees'
+}
+
+// ── SECURITY: AI Pentest ──────────────────────────────────────────────────────
+async function runPentest() {
+  const btn = document.getElementById('run-pentest-btn')
+  const status = document.getElementById('pentest-status')
+
+  btn.disabled = true
+  btn.textContent = 'Running...'
+  status.textContent = 'AI Pentest functionality has been moved to the standalone Guardian Desktop App'
+
+  setTimeout(() => {
+    btn.disabled = false
+    btn.textContent = 'Run Security Test'
+    status.textContent = 'Click to open Guardian Desktop App for AI-powered testing'
+  }, 2000)
+}
+
+const TYPE_SHORT = {
+  private_ip:'PrivIP', octal_octet:'Octal', decimal_integer:'Dec',
+  hex_octet:'Hex', ipv4_mapped_ipv6:'IPv6', loopback_alias:'Loop',
+  protocol_switch:'Proto', allowlist_violation:'Allow',
+  invalid_url:'Invalid', ssrf_parameter:'Param', error:'Error',
+}
+
+function renderGrid(variants) {
+  // Simplified - just show that functionality moved to desktop app
+  const grid = document.getElementById('variant-grid')
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8;font-size:14px">AI-powered testing now available in Guardian Desktop App</div>'
+}
+
+let lastVariants = []
+async function runPentestWithStore() {
+  // Functionality moved to desktop app
+  return runPentest()
+}
+
+function showVariantDetail(idx) {
+  // Functionality moved to desktop app
+}
+
+// ── SECURITY: Live Attack Log ─────────────────────────────────────────────────
+async function loadAttacks() {
+  // Attack log functionality moved to Guardian Desktop App
+  const el = document.getElementById('live-attack-log')
+  if (el) {
+    el.innerHTML = '<div class="no-attacks">Attack monitoring now available in Guardian Desktop App · Real-time feed of all blocked SSRF attempts</div>'
+  }
+}
+
+// ── SECURITY: Vulnerability Scanner ──────────────────────────────────────────
+async function runScanner() {
+  const domain = document.getElementById('scan-domain').value.trim()
+  if (!domain) return
+
+  const btn = document.getElementById('scan-btn')
+  const status = document.getElementById('scan-status')
+  const results = document.getElementById('scan-results')
+
+  btn.disabled = true
+  btn.textContent = 'Scanning...'
+  status.textContent = 'Vulnerability scanning moved to Guardian Desktop App'
+  results.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;font-size:14px">Advanced vulnerability scanning with AI-powered domain analysis now available in Guardian Desktop App</div>'
+
+  setTimeout(() => {
+    btn.disabled = false
+    btn.textContent = 'Scan Domain'
+    status.textContent = 'Enter a domain to scan for SSRF vulnerabilities'
+  }, 2000)
+}
+
+function showScanDetail(url, reason, vulnerable) {
+  const el = document.getElementById('scan-detail')
+  el.style.display = 'block'
+  el.innerHTML = `
+    <div style="font-size:10px;color:#64748b;margin-bottom:6px;text-transform:uppercase;font-weight:600">${vulnerable ? '⚠ VULNERABILITY FOUND' : 'Safe endpoint'}</div>
+    <div style="font-family:monospace;font-size:11px;color:#e2e8f0;word-break:break-all;margin-bottom:6px">${url}</div>
+    ${reason ? `<div style="color:#94a3b8;font-size:11px">${reason}</div>` : ''}
+  `
+}
+
+// ── nav helpers ───────────────────────────────────────────────────────────────
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'))
+  document.getElementById('page-'+name).classList.add('active')
+  if (el) el.classList.add('active')
+}
+
+function showSecTab(name, el) {
+  document.querySelectorAll('.sec-panel').forEach(p=>p.classList.remove('active'))
+  document.querySelectorAll('.sec-tab').forEach(t=>t.classList.remove('active'))
+  document.getElementById('spanel-'+name).classList.add('active')
+  if (el) el.classList.add('active')
+  if (name === 'attacks') loadAttacks()
+}
+
+// ── CRUD ──────────────────────────────────────────────────────────────────────
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+
+async function addEmployee() {
+  const name=document.getElementById('f-name').value.trim()
+  const email=document.getElementById('f-email').value.trim()
+  if(!name||!email){alert('Name and email required');return}
+  await fetch('/api/employees',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    name,email,
+    password:document.getElementById('f-pass').value||'pass123',
+    phone:document.getElementById('f-phone').value,
+    department:document.getElementById('f-dept').value,
+    role:document.getElementById('f-role').value,
+    salary:document.getElementById('f-salary').value||50000,
+    joined:document.getElementById('f-joined').value||new Date().toISOString().split('T')[0],
+  })})
+  closeModal('add-modal')
+  loadEmployees()
+  addActivity('New employee added: '+name,'#3b82f6')
+}
+
+async function deleteEmployee(id) {
+  const emp=employees.find(e=>e.id===id)
+  if(!confirm(`Delete ${emp?.name}?`))return
+  await fetch('/api/employees/'+id,{method:'DELETE'})
+  loadEmployees()
+  addActivity('Employee removed: '+(emp?.name||id),'#ef4444')
+}
+
+async function addDocument() {
+  const name=document.getElementById('d-name').value.trim()
+  if(!name){alert('Document name required');return}
+  await fetch('/api/documents',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    name,size:document.getElementById('d-size').value||'1 MB',url:document.getElementById('d-url').value||'#'
+  })})
+  closeModal('doc-modal')
+  loadDocuments()
+  addActivity('Document uploaded: '+name,'#22c55e')
+}
+
+async function deleteDoc(id) {
+  if(!confirm('Delete this document?'))return
+  await fetch('/api/documents/'+id,{method:'DELETE'})
+  loadDocuments()
+}
+
+function addActivity(text,color) {
+  const feed=document.getElementById('activity-feed')
+  const time=new Date().toLocaleTimeString()
+  feed.insertAdjacentHTML('afterbegin',`
+    <div class="activity-item">
+      <div class="activity-dot" style="background:${color}"></div>
+      <div class="activity-text">${text}</div>
+      <div class="activity-time">${time}</div>
+    </div>`)
+}
+
+async function logout(){
+  await fetch('/api/logout',{method:'POST'})
+  window.location.href='/login.html'
+}
+
+init()
+</script>
+</body>
+</html>

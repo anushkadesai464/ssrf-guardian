@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src http://localhost:*">
+  <title>Guardian Security</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#080b12;--surface:#0d1117;--surface2:#161b22;
+      --border:#21262d;--text:#e6edf3;--text2:#8b949e;--text3:#484f58;
+      --red:#ff3b3b;--red2:#da3633;--red-bg:rgba(255,59,59,0.08);
+      --red-border:rgba(255,59,59,0.25);--green:#3fb950;
+    }
+    body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;height:100vh;display:flex;flex-direction:column;user-select:none}
+    /* title bar */
+    .titlebar{height:38px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;-webkit-app-region:drag;flex-shrink:0}
+    .titlebar-left{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text2)}
+    .titlebar-dot{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 5px var(--red)}
+    .titlebar-controls{display:flex;gap:4px;-webkit-app-region:no-drag}
+    .ctrl-btn{width:28px;height:24px;border:none;background:transparent;color:var(--text3);cursor:pointer;border-radius:4px;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+    .ctrl-btn:hover{background:var(--surface2);color:var(--text)}
+    .ctrl-btn.close-btn:hover{background:#da3633;color:#fff}
+    /* main */
+    .main{flex:1;display:flex;align-items:center;justify-content:center;padding:20px}
+    .login-wrap{width:100%;max-width:400px}
+    .logo{text-align:center;margin-bottom:32px}
+    .logo-icon{width:64px;height:64px;background:var(--red-bg);border:1px solid var(--red-border);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px}
+    .logo h1{font-size:22px;font-weight:800;margin-bottom:4px}
+    .logo p{font-size:13px;color:var(--text2)}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px}
+    .card h2{font-size:17px;font-weight:700;margin-bottom:4px}
+    .card-sub{font-size:13px;color:var(--text2);margin-bottom:22px}
+    .field{margin-bottom:16px}
+    .field label{display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+    .field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-size:14px;outline:none;transition:border-color .15s}
+    .field input:focus{border-color:var(--red)}
+    .login-btn{width:100%;padding:12px;background:var(--red2);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:4px}
+    .login-btn:hover{background:var(--red)}
+    .login-btn:disabled{background:#21262d;color:var(--text3);cursor:not-allowed}
+    .error{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);padding:9px 12px;border-radius:7px;font-size:12px;margin-bottom:14px;display:none}
+    .divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+    .register-link{text-align:center;font-size:13px;color:var(--text2)}
+    .register-link a{color:var(--red);text-decoration:none;font-weight:600;cursor:pointer}
+    .register-link a:hover{text-decoration:underline}
+    .demo-hint{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;font-size:11px;color:var(--text3);margin-top:16px;line-height:1.7}
+    .demo-hint strong{color:var(--text2);display:block;margin-bottom:4px}
+  </style>
+</head>
+<body>
+
+<div class="titlebar">
+  <div class="titlebar-left">
+    <div class="titlebar-dot"></div>
+    Guardian Security
+  </div>
+  <div class="titlebar-controls">
+    <button class="ctrl-btn" onclick="window.electron.minimize()">─</button>
+    <button class="ctrl-btn" onclick="window.electron.maximize()">□</button>
+    <button class="ctrl-btn close-btn" onclick="window.electron.close()">✕</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="login-wrap">
+    <div class="logo">
+      <div class="logo-icon">🛡</div>
+      <h1>Guardian Security</h1>
+      <p>SSRF Protection Platform</p>
+    </div>
+
+    <div class="card">
+      <h2>Sign in</h2>
+      <div class="card-sub">Access your security dashboard</div>
+
+      <div class="error" id="error-msg"></div>
+
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" id="email" placeholder="admin@company.com" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="••••••••" />
+      </div>
+
+      <button class="login-btn" id="login-btn" onclick="login()">Sign In</button>
+
+      <hr class="divider">
+      <div class="register-link">
+  New company? <a href="#" id="reg-link">Register here</a>
+</div>
+
+      <div class="demo-hint">
+        <strong>Demo credentials:</strong>
+        admin@technotcorp.com / guardian123
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const PLATFORM = 'http://localhost:6000'
+
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') login() })
+
+  async function login() {
+    const email = document.getElementById('email').value.trim()
+    const password = document.getElementById('password').value
+    const btn = document.getElementById('login-btn')
+    const err = document.getElementById('error-msg')
+
+    err.style.display = 'none'
+    if (!email || !password) {
+      err.textContent = 'Please enter email and password'
+      err.style.display = 'block'
+      return
+    }
+
+    btn.disabled = true
+    btn.textContent = 'Signing in...'
+
+    try {
+      const res = await fetch(`${PLATFORM}/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include',
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        err.textContent = data.error || 'Invalid credentials'
+        err.style.display = 'block'
+        btn.disabled = false
+        btn.textContent = 'Sign In'
+        return
+      }
+
+      // Store company data
+      sessionStorage.setItem('company', JSON.stringify(data.company))
+      window.electron.navigate('dashboard.html')
+    } catch (e) {
+      err.textContent = 'Cannot connect to Guardian Platform. Make sure it is running.'
+      err.style.display = 'block'
+      btn.disabled = false
+      btn.textContent = 'Sign In'
+    }
+  }
+  document.getElementById('reg-link').addEventListener('click', function(e) {
+  e.preventDefault()
+  window.electron.navigate('register.html')
+})
+</script>
+</body>
+</html>

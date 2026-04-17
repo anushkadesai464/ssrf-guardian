@@ -1,0 +1,106 @@
+{
+  "company": {
+    "name": "TechNot Corp",
+    "founded": "2018",
+    "headquarters": "Mysuru, Karnataka",
+    "industry": "Technology",
+    "revenue": "₹4.2 Cr",
+    "employees": 6,
+    "guardianEnabled": false
+  },
+  "employees": [
+    {
+      "id": "EMP001",
+      "name": "Rajesh Kumar",
+      "email": "rajesh@technotcorp.com",
+      "password": "pass123",
+      "role": "admin",
+      "department": "Management",
+      "salary": 95000,
+      "joined": "2018-03-01",
+      "phone": "+91 98765 43210"
+    },
+    {
+      "id": "EMP002",
+      "name": "Priya Sharma",
+      "email": "priya@technotcorp.com",
+      "password": "pass123",
+      "role": "employee",
+      "department": "Engineering",
+      "salary": 65000,
+      "joined": "2019-07-15",
+      "phone": "+91 98765 43211"
+    },
+    {
+      "id": "EMP003",
+      "name": "Arjun Nair",
+      "email": "arjun@technotcorp.com",
+      "password": "pass123",
+      "role": "employee",
+      "department": "Engineering",
+      "salary": 70000,
+      "joined": "2020-01-10",
+      "phone": "+91 98765 43212"
+    },
+    {
+      "id": "EMP004",
+      "name": "Sneha Patel",
+      "email": "sneha@technotcorp.com",
+      "password": "pass123",
+      "role": "employee",
+      "department": "HR",
+      "salary": 55000,
+      "joined": "2020-06-20",
+      "phone": "+91 98765 43213"
+    },
+    {
+      "id": "EMP005",
+      "name": "Vikram Reddy",
+      "email": "vikram@technotcorp.com",
+      "password": "pass123",
+      "role": "employee",
+      "department": "Sales",
+      "salary": 60000,
+      "joined": "2021-03-05",
+      "phone": "+91 98765 43214"
+    },
+    {
+      "id": "EMP006",
+      "name": "Ananya Singh",
+      "email": "ananya@technotcorp.com",
+      "password": "pass123",
+      "role": "employee",
+      "department": "Marketing",
+      "salary": 58000,
+      "joined": "2022-08-12",
+      "phone": "+91 98765 43215"
+    }
+  ],
+  "documents": [
+    {
+      "id": "DOC001",
+      "name": "Employee Handbook 2024.pdf",
+      "size": "2.4 MB",
+      "uploadedBy": "EMP001",
+      "date": "2024-01-15",
+      "url": "https://example.com/docs/handbook.pdf"
+    },
+    {
+      "id": "DOC002",
+      "name": "Q3 Financial Report.pdf",
+      "size": "1.8 MB",
+      "uploadedBy": "EMP001",
+      "date": "2024-09-30",
+      "url": "https://example.com/docs/q3report.pdf"
+    },
+    {
+      "id": "DOC003",
+      "name": "Product Roadmap 2025.pptx",
+      "size": "5.2 MB",
+      "uploadedBy": "EMP002",
+      "date": "2024-11-01",
+      "url": "https://example.com/docs/roadmap.pptx"
+    }
+  ],
+  "attacks": []
+}

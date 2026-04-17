@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>SSRF Guardian — Blocked</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0f1117;
+      color: #e2e8f0;
+      font-family: 'Inter', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 580px;
+      width: 100%;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .red-dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: #ff4757;
+      box-shadow: 0 0 12px #ff4757;
+      flex-shrink: 0;
+    }
+    h1 { font-size: 22px; font-weight: 700; color: #ff4757; }
+    .url-box {
+      background: #1a1d27;
+      border: 1px solid rgba(255,71,87,0.3);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #ff4757;
+      word-break: break-all;
+    }
+    .info-card {
+      background: #1a1d27;
+      border: 1px solid #2e3347;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .info-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: #4a5568;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+    .attack-badge {
+      display: inline-block;
+      background: rgba(255,71,87,0.12);
+      border: 1px solid rgba(255,71,87,0.35);
+      color: #ff4757;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-top: 10px;
+    }
+    .stage-cell {
+      text-align: center;
+      padding: 6px 4px;
+      border-radius: 6px;
+      font-size: 9px;
+      line-height: 1.5;
+    }
+    .stage-pass    { background: rgba(46,213,115,0.12); color: #2ed573; }
+    .stage-fail    { background: rgba(255,71,87,0.12);  color: #ff4757; }
+    .stage-unknown { background: #22263a; color: #4a5568; }
+    .reason-text {
+      font-size: 13px;
+      color: #8892a4;
+      line-height: 1.6;
+    }
+    .back-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: #22263a;
+      border: 1px solid #2e3347;
+      border-radius: 10px;
+      color: #e2e8f0;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      margin-bottom: 8px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .back-btn:hover { background: #2e3347; }
+    .proceed-btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background: transparent;
+      border: 1px solid rgba(255,71,87,0.3);
+      border-radius: 10px;
+      color: #ff4757;
+      font-size: 12px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .proceed-btn:hover { background: rgba(255,71,87,0.08); }
+    .footer {
+      margin-top: 16px;
+      font-size: 10px;
+      color: #4a5568;
+      text-align: center;
+    }
+
+    .type-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #ff4757;
+      margin-bottom: 6px;
+    }
+    .stage-num {
+      font-size: 11px;
+      color: #8892a4;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="red-dot"></div>
+      <h1>SSRF Guardian blocked this URL</h1>
+    </div>
+
+    <div class="url-box" id="blocked-url">Loading...</div>
+
+    <div class="info-card">
+      <div class="info-label">Attack detected</div>
+      <div class="type-label" id="attack-type">Analyzing...</div>
+      <div class="stage-num" id="stage-num"></div>
+      <div class="reason-text" id="reason-text" style="margin-top:8px"></div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-label">Pipeline trace — 7 stages</div>
+      <div class="stage-grid" id="stage-grid">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
+    <a href="#" class="back-btn" id="back-btn">← Go back to safety</a>
+    <a href="#" class="proceed-btn" id="proceed-btn">I understand the risk — proceed anyway</a>
+
+    <div class="footer">SSRF Guardian v1.0 · Protected by 7-stage pipeline</div>
+  </div>
+<script src="blocked.js"></script>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "guardian-sdk",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "description": "SSRF Guardian protection SDK — drop-in middleware for Express",
+  "keywords": ["ssrf", "security", "middleware"],
+  "dependencies": {}
+}

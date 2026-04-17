@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TechNot Corp — Dashboard</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:#f1f5f9;min-height:100vh}
+    nav{background:#0f172a;padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between}
+    .brand{color:#fff;font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px}
+    .brand-dot{width:8px;height:8px;border-radius:50%;background:#3b82f6}
+    .nav-right{display:flex;align-items:center;gap:16px}
+    .nav-user{color:#94a3b8;font-size:14px}
+    .logout-btn{background:transparent;border:1px solid #334155;color:#94a3b8;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px}
+    .logout-btn:hover{background:#1e293b;color:#fff}
+    .sidebar{position:fixed;left:0;top:60px;width:220px;height:calc(100vh - 60px);background:#fff;border-right:1px solid #e2e8f0;padding:20px 0}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:#64748b;cursor:pointer;font-size:14px;transition:all .15s;text-decoration:none}
+    .nav-item:hover{background:#f8fafc;color:#1e293b}
+    .nav-item.active{background:#eff6ff;color:#1d4ed8;font-weight:600;border-right:3px solid #1d4ed8}
+    .nav-icon{font-size:16px;width:20px;text-align:center}
+    .main{margin-left:220px;padding:28px 32px}
+    .page{display:none}
+    .page.active{display:block}
+    h2{font-size:20px;font-weight:700;color:#0f172a;margin-bottom:6px}
+    .page-sub{font-size:14px;color:#64748b;margin-bottom:24px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+    .stat-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+    .stat-num{font-size:28px;font-weight:800;margin-bottom:4px}
+    .stat-label{font-size:12px;color:#64748b}
+    .card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:20px}
+    .card-title{font-size:15px;font-weight:600;color:#0f172a;margin-bottom:16px}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{text-align:left;padding:10px 12px;background:#f8fafc;color:#64748b;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.04em}
+    td{padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#374151}
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+    .badge-blue{background:#eff6ff;color:#1d4ed8}
+    .badge-green{background:#f0fdf4;color:#16a34a}
+    .profile-card{display:flex;align-items:center;gap:20px;padding:24px;background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:20px}
+    .avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#1d4ed8,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:700;flex-shrink:0}
+    .profile-info h3{font-size:18px;font-weight:700;color:#0f172a;margin-bottom:4px}
+    .profile-info p{font-size:13px;color:#64748b}
+    .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .info-item label{font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px}
+    .info-item span{font-size:14px;color:#1e293b;font-weight:500}
+    .fetch-section{background:#fff;border-radius:12px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+    .fetch-input-row{display:flex;gap:10px;margin-bottom:14px}
+    .fetch-input-row input{flex:1;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:monospace;outline:none}
+    .fetch-input-row input:focus{border-color:#3b82f6}
+    .fetch-btn{padding:10px 20px;background:#1d4ed8;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+    .result-leaked{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;overflow:hidden;margin-top:12px}
+    .result-leaked-header{background:#ef4444;padding:8px 14px;color:#fff;font-size:12px;font-weight:700}
+    .result-leaked pre{padding:14px;font-size:11px;color:#dc2626;font-family:monospace;white-space:pre-wrap;max-height:200px;overflow-y:auto}
+    .result-blocked{background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:14px;margin-top:12px}
+    .result-safe{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-top:12px}
+    pre{font-size:11px;white-space:pre-wrap;max-height:150px;overflow-y:auto}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="brand"><div class="brand-dot"></div>TechNot Corp</div>
+  <div class="nav-right">
+    <span class="nav-user" id="nav-name">Loading...</span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="sidebar">
+  <a class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon">🏠</span>Dashboard</a>
+  <a class="nav-item" onclick="showPage('profile')"><span class="nav-icon">👤</span>My Profile</a>
+  <a class="nav-item" onclick="showPage('documents')"><span class="nav-icon">📁</span>Documents</a>
+  <a class="nav-item" onclick="showPage('tools')"><span class="nav-icon">🔧</span>Dev Tools</a>
+</div>
+
+<div class="main">
+
+  <!-- Dashboard -->
+  <div class="page active" id="page-dashboard">
+    <h2 id="welcome-text">Welcome back!</h2>
+    <p class="page-sub">Here's your overview for today</p>
+    <div class="stats">
+      <div class="stat-card"><div class="stat-num" style="color:#3b82f6" id="emp-count">6</div><div class="stat-label">Total employees</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#22c55e" id="dept-name">—</div><div class="stat-label">Your department</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#f59e0b" id="doc-count">3</div><div class="stat-label">Documents</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:#8b5cf6" id="salary-disp">—</div><div class="stat-label">Monthly salary</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Team Members</div>
+      <table>
+        <thead><tr><th>Name</th><th>Department</th><th>Role</th><th>Joined</th></tr></thead>
+        <tbody id="team-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Profile -->
+  <div class="page" id="page-profile">
+    <h2>My Profile</h2>
+    <p class="page-sub">Your personal information</p>
+    <div class="profile-card">
+      <div class="avatar" id="profile-avatar">?</div>
+      <div class="profile-info">
+        <h3 id="profile-name">Loading...</h3>
+        <p id="profile-role">—</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Personal Details</div>
+      <div class="info-grid">
+        <div class="info-item"><label>Employee ID</label><span id="p-id">—</span></div>
+        <div class="info-item"><label>Email</label><span id="p-email">—</span></div>
+        <div class="info-item"><label>Department</label><span id="p-dept">—</span></div>
+        <div class="info-item"><label>Phone</label><span id="p-phone">—</span></div>
+        <div class="info-item"><label>Joined</label><span id="p-joined">—</span></div>
+        <div class="info-item"><label>Salary</label><span id="p-salary">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Documents -->
+  <div class="page" id="page-documents">
+    <h2>Documents</h2>
+    <p class="page-sub">Company documents and resources</p>
+    <div class="card">
+      <table>
+        <thead><tr><th>Name</th><th>Size</th><th>Uploaded</th><th>Date</th></tr></thead>
+        <tbody id="docs-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Dev Tools — VULNERABLE ENDPOINT -->
+  <div class="page" id="page-tools">
+    <h2>Developer Tools</h2>
+    <p class="page-sub">Internal utilities for the engineering team</p>
+    <div class="fetch-section">
+      <div class="card-title">URL Content Fetcher</div>
+      <p style="font-size:13px;color:#64748b;margin-bottom:14px">Fetch content from external URLs — used for RSS imports, webhook testing, and API integration.</p>
+      <div class="fetch-input-row">
+        <input type="text" id="fetch-url" placeholder="https://example.com/api/data" />
+        <button class="fetch-btn" onclick="fetchURL()">Fetch</button>
+      </div>
+      <div id="fetch-result"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let me = null
+
+  async function init() {
+    try {
+      const res = await fetch('/api/me')
+      if (!res.ok) { window.location.href = '/login.html'; return }
+      me = await res.json()
+      document.getElementById('nav-name').textContent = me.name
+      document.getElementById('welcome-text').textContent = `Welcome back, ${me.name.split(' ')[0]}!`
+      document.getElementById('dept-name').textContent = me.department
+      document.getElementById('salary-disp').textContent = '₹' + me.salary.toLocaleString()
+      document.getElementById('profile-name').textContent = me.name
+      document.getElementById('profile-role').textContent = me.role + ' · ' + me.department
+      document.getElementById('profile-avatar').textContent = me.name[0]
+      document.getElementById('p-id').textContent = me.id
+      document.getElementById('p-email').textContent = me.email
+      document.getElementById('p-dept').textContent = me.department
+      document.getElementById('p-phone').textContent = me.phone
+      document.getElementById('p-joined').textContent = me.joined
+      document.getElementById('p-salary').textContent = '₹' + me.salary.toLocaleString()
+      loadTeam()
+      loadDocs()
+    } catch { window.location.href = '/login.html' }
+  }
+
+  async function loadTeam() {
+    const res = await fetch('/api/employees')
+    const list = await res.json()
+    document.getElementById('emp-count').textContent = list.length
+    document.getElementById('team-table').innerHTML = list.map(e => `
+      <tr>
+        <td>${e.name}</td>
+        <td>${e.department}</td>
+        <td><span class="badge ${e.role==='admin'?'badge-blue':'badge-green'}">${e.role}</span></td>
+        <td>${e.joined}</td>
+      </tr>`).join('')
+  }
+
+  async function loadDocs() {
+    const res = await fetch('/api/documents')
+    const list = await res.json()
+    document.getElementById('doc-count').textContent = list.length
+    document.getElementById('docs-table').innerHTML = list.map(d => `
+      <tr>
+        <td>📄 ${d.name}</td>
+        <td>${d.size}</td>
+        <td>${d.uploadedBy}</td>
+        <td>${d.date}</td>
+      </tr>`).join('')
+  }
+
+  async function fetchURL() {
+    const url = document.getElementById('fetch-url').value.trim()
+    if (!url) return
+    const resultDiv = document.getElementById('fetch-result')
+    resultDiv.innerHTML = '<div style="color:#64748b;font-size:13px;padding:10px 0">Fetching...</div>'
+    try {
+      const res = await fetch('/api/fetch-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      })
+      const data = await res.json()
+      if (data.blocked) {
+        resultDiv.innerHTML = `
+          <div class="result-blocked">
+            <div style="color:#16a34a;font-weight:700;font-size:14px;margin-bottom:4px">✓ Blocked by Guardian</div>
+            <div style="color:#64748b;font-size:12px">Attack: ${data.attackType?.replace(/_/g,' ')} · Stage ${data.blockedAtStage} · IP: ${data.attackerIP} · ${data.location}</div>
+          </div>`
+      } else if (data.body?.includes('AccessKeyId') || data.body?.includes('SecretAccessKey')) {
+        resultDiv.innerHTML = `
+          <div class="result-leaked">
+            <div class="result-leaked-header">⚠ CRITICAL — SERVER CREDENTIALS LEAKED</div>
+            <pre>${data.body}</pre>
+          </div>`
+      } else if (data.error) {
+        resultDiv.innerHTML = `<div class="result-safe"><span style="color:#ef4444">Error: ${data.error}</span></div>`
+      } else {
+        resultDiv.innerHTML = `
+          <div class="result-safe">
+            <div style="font-size:12px;color:#64748b;margin-bottom:6px">Response · ${data.status}</div>
+            <pre style="color:#374151">${(data.body||'').slice(0,400)}</pre>
+          </div>`
+      }
+    } catch (err) {
+      resultDiv.innerHTML = `<div class="result-safe" style="color:#ef4444">Failed: ${err.message}</div>`
+    }
+  }
+
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
+    document.getElementById('page-' + name).classList.add('active')
+    event.currentTarget.classList.add('active')
+  }
+
+  async function logout() {
+    await fetch('/api/logout', { method: 'POST' })
+    window.location.href = '/login.html'
+  }
+
+  init()
+</script>
+</body>
+</html>

@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guardian Security Platform</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#080b12;--surface:#0d1117;--surface2:#161b22;
+      --border:#21262d;--border2:#30363d;
+      --text:#e6edf3;--text2:#8b949e;--text3:#484f58;
+      --red:#ff3b3b;--red2:#da3633;--red-bg:rgba(255,59,59,0.08);--red-border:rgba(255,59,59,0.25);
+      --green:#3fb950;--green-bg:rgba(63,185,80,0.08);--green-border:rgba(63,185,80,0.25);
+      --blue:#58a6ff;--blue-bg:rgba(88,166,255,0.08);
+      --amber:#d29922;--purple:#bc8cff;
+    }
+    body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+    .hidden{display:none!important}
+
+    /* ── NAV ── */
+    nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 40px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+    .nav-brand{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;cursor:pointer}
+    .nav-dot{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 7px var(--red)}
+    .nav-links{display:flex;align-items:center;gap:10px}
+    .nav-btn{padding:7px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+    .nav-btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+    .nav-btn-outline:hover{background:var(--surface2);color:var(--text)}
+    .nav-btn-red{background:var(--red2);color:#fff}
+    .nav-btn-red:hover{background:var(--red)}
+
+    /* ── LANDING ── */
+    #page-landing{display:block}
+    .hero{padding:80px 40px;text-align:center;background:linear-gradient(180deg,rgba(255,59,59,0.05) 0%,transparent 100%)}
+    .hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);font-size:11px;padding:4px 14px;border-radius:20px;font-weight:600;margin-bottom:20px;letter-spacing:.04em;text-transform:uppercase}
+    .hero h1{font-size:48px;font-weight:900;margin-bottom:14px;line-height:1.15}
+    .hero h1 span{color:var(--red)}
+    .hero p{font-size:17px;color:var(--text2);max-width:540px;margin:0 auto 32px;line-height:1.7}
+    .hero-btns{display:flex;gap:12px;justify-content:center}
+    .btn-big-red{background:var(--red2);color:#fff;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all .2s}
+    .btn-big-red:hover{background:var(--red);transform:scale(1.02)}
+    .btn-big-outline{background:transparent;color:var(--text);padding:14px 32px;border-radius:10px;font-size:15px;font-weight:600;border:1.5px solid var(--border2);cursor:pointer;transition:all .15s}
+    .btn-big-outline:hover{background:var(--surface2)}
+    .features{max-width:1100px;margin:60px auto;padding:0 40px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .feat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px}
+    .feat-icon{font-size:28px;margin-bottom:12px}
+    .feat-title{font-size:15px;font-weight:700;margin-bottom:6px}
+    .feat-desc{font-size:13px;color:var(--text2);line-height:1.6}
+    .how-section{max-width:800px;margin:0 auto 80px;padding:0 40px;text-align:center}
+    .how-section h2{font-size:28px;font-weight:800;margin-bottom:10px}
+    .how-section p{font-size:15px;color:var(--text2);margin-bottom:32px}
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;text-align:left}
+    .step{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px}
+    .step-num{font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+    .step-title{font-size:14px;font-weight:700;margin-bottom:5px}
+    .step-desc{font-size:12px;color:var(--text2);line-height:1.5}
+
+    /* ── AUTH PAGES ── */
+    .auth-wrap{min-height:calc(100vh - 58px);display:flex;align-items:center;justify-content:center;padding:40px}
+    .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;width:100%;max-width:420px}
+    .auth-title{font-size:20px;font-weight:800;margin-bottom:4px}
+    .auth-sub{font-size:13px;color:var(--text2);margin-bottom:24px}
+    .field{margin-bottom:14px}
+    .field label{display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+    .field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-size:14px;outline:none;transition:border-color .15s}
+    .field input:focus{border-color:var(--red)}
+    .auth-btn{width:100%;padding:12px;background:var(--red2);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;transition:all .15s}
+    .auth-btn:hover{background:var(--red)}
+    .auth-btn:disabled{background:#21262d;color:var(--text3);cursor:not-allowed}
+    .auth-err{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);padding:9px 12px;border-radius:7px;font-size:12px;margin-bottom:14px;display:none}
+    .auth-switch{text-align:center;font-size:13px;color:var(--text2);margin-top:18px}
+    .auth-switch a{color:var(--red);text-decoration:none;font-weight:600;cursor:pointer}
+    .auth-switch a:hover{text-decoration:underline}
+    .demo-hint{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;font-size:11px;color:var(--text3);margin-top:14px;line-height:1.7}
+    .demo-hint strong{color:var(--text2);display:block;margin-bottom:3px}
+
+    /* ── SUCCESS (after register) ── */
+    .success-box{background:var(--surface);border:1px solid var(--green-border);border-radius:16px;padding:32px;max-width:520px;width:100%;text-align:center}
+    .success-icon{font-size:48px;margin-bottom:14px}
+    .success-title{font-size:20px;font-weight:800;color:var(--green);margin-bottom:8px}
+    .success-sub{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6}
+    .api-key-box{background:var(--surface2);border:1px solid var(--green-border);border-radius:8px;padding:12px 14px;font-family:monospace;font-size:14px;color:var(--green);word-break:break-all;margin-bottom:14px;text-align:left}
+    .code-snippet{background:#0a0d14;border:1px solid var(--border);border-radius:8px;padding:14px;font-family:monospace;font-size:12px;color:var(--text2);line-height:1.8;text-align:left;margin-bottom:18px}
+    .go-btn{background:var(--green);color:#000;border:none;border-radius:9px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
+    .go-btn:hover{opacity:.9}
+
+    /* ── DASHBOARD ── */
+    #page-dashboard{display:none}
+    .dash-layout{display:flex;min-height:calc(100vh - 58px)}
+    .sidebar{width:210px;background:var(--surface);border-right:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column}
+    .sb-company{padding:14px;border-bottom:1px solid var(--border)}
+    .sb-company-name{font-size:13px;font-weight:700;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .sb-conn{display:flex;align-items:center;gap:5px;font-size:11px}
+    .sb-dot{width:6px;height:6px;border-radius:50%}
+    .sb-dot.on{background:var(--green);box-shadow:0 0 4px var(--green)}
+    .sb-dot.off{background:var(--text3)}
+    .nav-sec{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:12px 14px 4px}
+    .nav-item{display:flex;align-items:center;gap:9px;padding:9px 14px;color:var(--text2);cursor:pointer;font-size:13px;transition:all .15s;border-right:2px solid transparent}
+    .nav-item:hover{background:var(--surface2);color:var(--text)}
+    .nav-item.active{background:rgba(255,59,59,0.06);color:var(--red);border-right-color:var(--red)}
+    .sb-bottom{margin-top:auto;padding:10px;border-top:1px solid var(--border)}
+    .logout-btn{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:8px;color:var(--text2);font-size:12px;cursor:pointer}
+    .logout-btn:hover{background:var(--red-bg);color:var(--red);border-color:var(--red-border)}
+    .dash-content{flex:1;padding:24px;overflow-y:auto}
+    .dpage{display:none}.dpage.active{display:block}
+    h2{font-size:18px;font-weight:700;margin-bottom:4px}
+    .page-sub{font-size:13px;color:var(--text2);margin-bottom:18px}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
+    .card-title{font-size:13px;font-weight:600;margin-bottom:12px;color:var(--text);display:flex;align-items:center;justify-content:space-between}
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+    .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px}
+    .stat-num{font-size:24px;font-weight:800;margin-bottom:3px}
+    .stat-lbl{font-size:10px;color:var(--text3)}
+    .conn-hero{border-radius:10px;padding:16px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px}
+    .conn-hero.on{background:var(--green-bg);border:1px solid var(--green-border)}
+    .conn-hero.off{background:var(--red-bg);border:1px solid var(--red-border)}
+    .conn-title{font-size:15px;font-weight:700;margin-bottom:3px}
+    .conn-hero.on .conn-title{color:var(--green)}
+    .conn-hero.off .conn-title{color:var(--red)}
+    .conn-sub{font-size:12px;color:var(--text2);line-height:1.5}
+    .a-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface2);border-radius:7px;margin-bottom:4px;border:1px solid var(--border);font-size:11px;cursor:pointer;transition:all .12s}
+    .a-item:hover{border-color:var(--red-border);background:var(--red-bg)}
+    .a-ip{font-family:monospace;color:var(--red);font-weight:700;flex-shrink:0;min-width:85px}
+    .a-type{color:var(--text2);flex:1}
+    .a-loc{background:var(--red-bg);color:var(--red);padding:2px 5px;border-radius:3px;font-size:9px;font-weight:600;flex-shrink:0}
+    .a-stage{color:var(--text3);font-size:10px;flex-shrink:0}
+    .a-time{color:var(--text3);font-size:10px;flex-shrink:0}
+    .no-attacks{text-align:center;padding:28px;color:var(--text3);font-size:13px}
+    .ai-panel{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:13px;line-height:1.8;color:var(--text);min-height:80px;white-space:pre-wrap}
+    .pt-hero{background:linear-gradient(135deg,var(--surface),rgba(255,59,59,0.04));border:1px solid var(--border);border-radius:12px;padding:22px;text-align:center;margin-bottom:14px}
+    .run-btn{background:var(--red2);color:#fff;border:none;border-radius:9px;padding:12px 26px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+    .run-btn:hover{background:var(--red);transform:scale(1.02)}
+    .run-btn:disabled{background:#21262d;color:var(--text3);cursor:not-allowed;transform:none}
+    .status-bar{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;margin-bottom:12px;display:flex;align-items:center;gap:9px;font-size:12px;display:none}
+    .s-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+    .s-dot.idle{background:var(--text3)}.s-dot.run{background:var(--amber);animation:pulse 1s infinite}.s-dot.done{background:var(--green)}.s-dot.err{background:var(--red)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    .prog-wrap{height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-bottom:12px;display:none}
+    .prog-bar{height:3px;background:var(--red);width:0%;transition:width .3s}
+    .pt-sum{display:none;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+    .pt-sum-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center}
+    .pt-num{font-size:22px;font-weight:800;margin-bottom:3px}
+    .cat-grid{display:none;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+    .cat-card{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:10px 12px}
+    .cat-name{font-size:10px;font-weight:600;margin-bottom:5px}
+    .cat-bar-bg{background:var(--surface2);border-radius:2px;height:4px;overflow:hidden;margin-bottom:4px}
+    .cat-bar{height:4px;border-radius:2px;transition:width .5s}
+    .cat-stats{font-size:9px;color:var(--text3);display:flex;justify-content:space-between}
+    .v-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-bottom:10px}
+    .v-cell{border-radius:5px;padding:5px 2px;text-align:center;cursor:pointer;border:1px solid transparent;transition:all .12s}
+    .v-cell:hover{transform:scale(1.1)}
+    .v-cell.blocked{background:var(--green-bg);border-color:var(--green-border)}
+    .v-cell.passed{background:var(--red-bg);border-color:var(--red-border)}
+    .v-cell.pending{background:var(--surface2);border-color:var(--border)}
+    .v-num{font-size:7px;color:var(--text3)}.v-icon{font-size:11px}.v-stage{font-size:7px;color:var(--text3)}
+    .cert{display:none;background:var(--green-bg);border:1px solid var(--green-border);border-radius:12px;padding:24px;text-align:center;margin-top:12px}
+    .cert-title{font-size:18px;font-weight:800;color:var(--green);margin-bottom:5px}
+    .api-box{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 13px;font-family:monospace;font-size:13px;color:var(--green);word-break:break-all;margin-bottom:10px}
+    .code-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:13px;font-family:monospace;font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:10px}
+    .d-row{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid var(--border)}
+    .d-row:last-child{border-bottom:none}
+    .d-key{color:var(--text3)}.d-val{color:var(--text);font-weight:500;font-size:11px}
+    .tech-table{width:100%;border-collapse:collapse;font-size:11px}
+    .tech-table th{text-align:left;padding:7px 9px;color:var(--text3);font-weight:600;font-size:10px;text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--surface2)}
+    .tech-table td{padding:6px 9px;border-bottom:1px solid var(--border);color:var(--text2)}
+    .tech-table tr:hover td{background:var(--surface2);cursor:pointer}
+    .tech-table tr:last-child td{border-bottom:none}
+    .tb{font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px}
+    .tb-g{background:var(--green-bg);color:var(--green)}.tb-r{background:var(--red-bg);color:var(--red)}
+    /* modal */
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:300;align-items:center;justify-content:center}
+    .overlay.show{display:flex}
+    .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;width:460px;max-width:90vw;max-height:85vh;overflow-y:auto}
+    .modal-title{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+    .close-modal{background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer}
+    .close-modal:hover{color:var(--text)}
+    .d-url{font-family:monospace;font-size:10px;color:var(--text2);background:var(--surface2);border-radius:6px;padding:8px 10px;word-break:break-all;margin-bottom:10px;border:1px solid var(--border);line-height:1.5}
+    .stage-mini{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:10px}
+    .smc{text-align:center;padding:5px 2px;border-radius:4px;font-size:8px;line-height:1.4}
+    .smc.p{background:var(--green-bg);color:var(--green)}.smc.f{background:var(--red-bg);color:var(--red)}.smc.u{background:var(--surface2);color:var(--text3)}
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-track{background:var(--surface)}
+    ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <div class="nav-brand" onclick="showLanding()">
+    <div class="nav-dot"></div>
+    Guardian Security
+  </div>
+  <div class="nav-links" id="nav-auth-links">
+    <button class="nav-btn nav-btn-outline" onclick="showLogin()">Sign In</button>
+    <button class="nav-btn nav-btn-red" onclick="showRegister()">Get Started Free</button>
+  </div>
+  <div class="nav-links hidden" id="nav-dash-links">
+    <span style="font-size:13px;color:var(--text2)" id="nav-company-name"></span>
+    <div style="display:flex;align-items:center;gap:6px">
+      <div class="sb-dot off" id="nav-conn-dot"></div>
+      <span style="font-size:12px;color:var(--text3)" id="nav-conn-text">Checking...</span>
+    </div>
+    <button class="nav-btn nav-btn-outline" onclick="logout()">Sign Out</button>
+  </div>
+</nav>
+
+<!-- ── LANDING PAGE ── -->
+<div id="page-landing">
+  <div class="hero">
+    <div class="hero-badge">🛡 SSRF Protection Platform</div>
+    <h1>Stop <span>SSRF Attacks</span><br>Before They Happen</h1>
+    <p>Guardian protects your server from Server-Side Request Forgery attacks. Add two lines of code — get enterprise-grade security instantly.</p>
+    <div class="hero-btns">
+      <button class="btn-big-red" onclick="showRegister()">Start Free — Get API Key</button>
+      <button class="btn-big-outline" onclick="showLogin()">Sign In to Dashboard</button>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feat-card">
+      <div class="feat-icon">⚡</div>
+      <div class="feat-title">2-Line Installation</div>
+      <div class="feat-desc">Add one import and one middleware call. Guardian protects all outbound requests automatically.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🤖</div>
+      <div class="feat-title">AI-Powered Detection</div>
+      <div class="feat-desc">7-stage pipeline catches decimal IPs, octal notation, hex encoding, IPv6 mapping, and redirect chains.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📊</div>
+      <div class="feat-title">Real-Time Dashboard</div>
+      <div class="feat-desc">See every attack attempt instantly — attacker IP, location, technique used, and which stage blocked it.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔴</div>
+      <div class="feat-title">Live Attack Feed</div>
+      <div class="feat-desc">Real-time stream of blocked attacks with geolocation. Know who's targeting you and from where.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🧪</div>
+      <div class="feat-title">Auto Penetration Test</div>
+      <div class="feat-desc">AI generates 60 attack variants and tests your server. Proves Guardian blocks everything.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">💬</div>
+      <div class="feat-title">AI Attack Explainer</div>
+      <div class="feat-desc">Every blocked attack comes with an AI explanation — what was tried, what was at risk, how it was stopped.</div>
+    </div>
+  </div>
+
+  <div class="how-section">
+    <h2>How it works</h2>
+    <p>From registration to protection in under 2 minutes</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">Step 1</div>
+        <div class="step-title">Register your company</div>
+        <div class="step-desc">Enter your company name and email. Get a unique API key instantly.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">Step 2</div>
+        <div class="step-title">Add 2 lines to your server</div>
+        <div class="step-desc">Import Guardian SDK and call protect() with your API key. Done.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">Step 3</div>
+        <div class="step-title">Monitor from dashboard</div>
+        <div class="step-desc">See your server connect live. Watch attacks get blocked in real time.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── LOGIN PAGE ── -->
+<div id="page-login" class="hidden">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-title">Sign in to Guardian</div>
+      <div class="auth-sub">Access your security dashboard</div>
+      <div class="auth-err" id="login-err"></div>
+      <div class="field"><label>Email</label><input type="email" id="login-email" placeholder="admin@company.com" /></div>
+      <div class="field"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" /></div>
+      <button class="auth-btn" id="login-btn" onclick="doLogin()">Sign In</button>
+      <div class="auth-switch">Don't have an account? <a onclick="showRegister()">Register here</a></div>
+      <div class="demo-hint">
+        <strong>Demo credentials:</strong>
+        admin@technotcorp.com / guardian123
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── REGISTER PAGE ── -->
+<div id="page-register" class="hidden">
+  <div class="auth-wrap">
+    <div id="reg-form-wrap">
+      <div class="auth-card">
+        <div class="auth-title">Register your company</div>
+        <div class="auth-sub">Get SSRF protection in 30 seconds</div>
+        <div class="auth-err" id="reg-err"></div>
+        <div class="field"><label>Company Name *</label><input id="reg-name" placeholder="Acme Corp" /></div>
+        <div class="field"><label>Email *</label><input type="email" id="reg-email" placeholder="admin@company.com" /></div>
+        <div class="field"><label>Password *</label><input type="password" id="reg-pass" placeholder="Min 8 characters" /></div>
+        <div class="field"><label>Website URL</label><input id="reg-site" placeholder="https://yourcompany.com" /></div>
+        <button class="auth-btn" id="reg-btn" onclick="doRegister()">Register — Get API Key</button>
+        <div class="auth-switch">Already registered? <a onclick="showLogin()">Sign in</a></div>
+      </div>
+    </div>
+
+    <div id="reg-success-wrap" class="hidden">
+      <div class="success-box">
+        <div class="success-icon">🎉</div>
+        <div class="success-title">You're protected!</div>
+        <div class="success-sub">Your company is registered. Add this API key to your server to activate Guardian protection.</div>
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;text-align:left">Your API Key</div>
+        <div class="api-key-box" id="reg-api-key">—</div>
+        <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;text-align:left">Add to your server.js</div>
+        <div class="code-snippet" id="reg-snippet">—</div>
+        <button class="go-btn" onclick="goToDashboard()">Open Dashboard →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div id="page-dashboard" class="hidden">
+  <div class="dash-layout">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sb-company">
+        <div class="sb-company-name" id="sb-name">Loading...</div>
+        <div class="sb-conn">
+          <div class="sb-dot off" id="sb-dot"></div>
+          <span id="sb-status" style="color:var(--text3)">Checking...</span>
+        </div>
+      </div>
+      <div class="nav-sec">Monitor</div>
+      <div class="nav-item active" id="nav-overview" onclick="showDPage('overview',this)">🏠 Overview</div>
+      <div class="nav-item" id="nav-attacks" onclick="showDPage('attacks',this)">🔴 Attack Log</div>
+      <div class="nav-item" id="nav-explain" onclick="showDPage('explain',this)">🤖 AI Explainer</div>
+      <div class="nav-sec">Security</div>
+      <div class="nav-item" id="nav-pentest" onclick="showDPage('pentest',this)">⚡ Penetration Test</div>
+      <div class="nav-sec">Account</div>
+      <div class="nav-item" id="nav-blocked" onclick="showDPage('blocked',this)">🔒 Blocked IPs</div>
+      <div class="nav-item" id="nav-apikey" onclick="showDPage('apikey',this)">🔑 API Key & Setup</div>
+      <div class="sb-bottom">
+        <button class="logout-btn" onclick="logout()">Sign Out</button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="dash-content">
+
+      <!-- OVERVIEW -->
+      <div class="dpage active" id="dpage-overview">
+        <h2>Overview</h2>
+        <p class="page-sub" id="ov-sub">Loading...</p>
+        <div class="conn-hero off" id="conn-hero">
+          <div style="font-size:28px" id="conn-icon">🔌</div>
+          <div>
+            <div class="conn-title" id="conn-title">Checking...</div>
+            <div class="conn-sub" id="conn-sub">Verifying SDK connection</div>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-num" style="color:var(--red)" id="st-total">0</div><div class="stat-lbl">Total attacks blocked</div></div>
+          <div class="stat-card"><div class="stat-num" style="color:var(--amber)" id="st-today">0</div><div class="stat-lbl">Blocked today</div></div>
+          <div class="stat-card"><div class="stat-num" style="color:var(--purple)" id="st-type">—</div><div class="stat-lbl">Top attack type</div></div>
+          <div class="stat-card"><div class="stat-num" style="color:var(--blue)" id="st-last">—</div><div class="stat-lbl">Last attack</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Recent attacks <span style="font-size:10px;color:var(--text3);font-weight:400">click to explain with AI</span></div>
+          <div id="ov-attacks"><div class="no-attacks">No attacks yet</div></div>
+        </div>
+      </div>
+
+      <!-- ATTACK LOG -->
+      <div class="dpage" id="dpage-attacks">
+        <h2>Attack Log</h2>
+        <p class="page-sub">All SSRF attacks blocked by Guardian SDK</p>
+        <div class="card">
+          <div id="attack-log"><div class="no-attacks">No attacks logged yet</div></div>
+        </div>
+      </div>
+
+      <!-- AI EXPLAINER -->
+      <div class="dpage" id="dpage-explain">
+        <h2>AI Explainer</h2>
+        <p class="page-sub">Select any attack for AI-powered analysis</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="card">
+            <div class="card-title">Select attack</div>
+            <div id="explain-list"><div class="no-attacks">No attacks yet</div></div>
+          </div>
+          <div class="card">
+            <div class="card-title">AI Analysis</div>
+            <div class="ai-panel" id="ai-output" style="color:var(--text3);font-style:italic">Select an attack to get AI analysis...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PENTEST -->
+      <div class="dpage" id="dpage-pentest">
+        <h2>AI Penetration Test</h2>
+        <p class="page-sub">Auto-generates SSRF variants and tests your server</p>
+        <div class="pt-hero">
+          <div style="font-size:32px;margin-bottom:10px">🤖</div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:6px">Automated Security Test</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:14px;max-width:380px;margin-left:auto;margin-right:auto;line-height:1.6">AI generates every known SSRF bypass technique and tests each one through the Guardian pipeline</div>
+          <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:6px 12px;font-family:monospace;font-size:12px;color:var(--green);display:inline-block;margin-bottom:14px" id="pt-target">Target: detecting...</div><br><br>
+          <button class="run-btn" id="pt-btn" onclick="runPentest()">🚀 Start Security Test</button>
+        </div>
+        <div class="status-bar" id="pt-sb"><div class="s-dot idle" id="pt-dot"></div><div style="flex:1" id="pt-txt">Ready</div><div id="pt-prog-txt" style="color:var(--text3);font-family:monospace"></div></div>
+        <div class="prog-wrap" id="pt-prog"><div class="prog-bar" id="pt-bar"></div></div>
+        <div class="pt-sum" id="pt-sum">
+          <div class="pt-sum-card"><div class="pt-num" style="color:var(--green)" id="pt-blocked">0</div><div style="font-size:10px;color:var(--text3)">Blocked ✓</div></div>
+          <div class="pt-sum-card"><div class="pt-num" style="color:var(--red)" id="pt-passed">0</div><div style="font-size:10px;color:var(--text3)">Passed ⚠</div></div>
+          <div class="pt-sum-card"><div class="pt-num" style="color:var(--blue)" id="pt-total">0</div><div style="font-size:10px;color:var(--text3)">Total tested</div></div>
+        </div>
+        <div class="cat-grid" id="pt-cats"></div>
+        <div class="card" id="pt-grid-card" style="display:none">
+          <div class="card-title">Attack grid <span style="font-size:10px;color:var(--text3);font-weight:400">click for details</span></div>
+          <div class="v-grid" id="pt-grid"></div>
+        </div>
+        <div class="card" id="pt-tbl-card" style="display:none">
+          <div class="card-title">Technique breakdown</div>
+          <table class="tech-table"><thead><tr><th>#</th><th>URL</th><th>Technique</th><th>Category</th><th>Result</th><th>Stage</th></tr></thead><tbody id="pt-tbl"></tbody></table>
+        </div>
+        <div class="cert" id="pt-cert">
+          <div style="font-size:40px;margin-bottom:8px">🏆</div>
+          <div class="cert-title">Server Fully Protected</div>
+          <div style="font-size:13px;color:var(--text2);margin-top:5px">All <span id="cert-n">0</span> SSRF attack variants blocked</div>
+        </div>
+      </div>
+
+      <!-- API KEY -->
+      <div class="dpage" id="dpage-apikey">
+        <h2>API Key & Setup</h2>
+        <p class="page-sub">Connect Guardian to your server</p>
+        <div class="card"><div class="card-title">Your API Key</div><div class="api-box" id="ak-key">—</div><div style="font-size:11px;color:var(--text3)">Keep this secret. Never commit to version control.</div></div>
+        <div class="card"><div class="card-title">Installation — 2 lines</div><div class="code-box" id="ak-snippet">—</div><div style="font-size:12px;color:var(--text2);line-height:1.8">After adding these 2 lines:<br>✓ All outbound fetches intercepted<br>✓ SSRF attacks blocked via 7-stage pipeline<br>✓ Attacks reported here in real time<br>✓ Attacker IP + location logged</div></div>
+        <div class="card"><div class="card-title">Account</div>
+          <div class="d-row"><span class="d-key">Company</span><span class="d-val" id="ak-co">—</span></div>
+          <div class="d-row"><span class="d-key">Email</span><span class="d-val" id="ak-em">—</span></div>
+          <div class="d-row"><span class="d-key">Plan</span><span class="d-val" style="color:var(--green)">Pro — Active</span></div>
+          <div class="d-row"><span class="d-key">Registered</span><span class="d-val" id="ak-dt">—</span></div>
+          <div class="d-row" style="border:none"><span class="d-key">Website</span><span class="d-val" id="ak-site">—</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- BLOCKED IPs PAGE -->
+<div class="dpage" id="dpage-blocked">
+  <h2>Blocked IPs</h2>
+  <p class="page-sub">IPs permanently blocked from accessing your server</p>
+  <div class="card" id="blocked-ips-list">
+    <div class="no-attacks">No IPs blocked yet</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Block an IP manually</div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <input id="manual-ip" placeholder="Enter IP address e.g. 192.168.1.100"
+        style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-size:13px;font-family:monospace;outline:none"/>
+      <button onclick="manualBlock()"
+        style="background:var(--red2);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer">
+        Block IP
+      </button>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<div class="overlay" id="overlay" onclick="closeMod(event)">
+  <div class="modal">
+    <div class="modal-title">Detail <button class="close-modal" onclick="closeMod()">✕</button></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+    
+const PLATFORM = 'http://localhost:6060'
+
+const GROQ_KEY = ''
+const STAGE_NAMES = ['Scheme','DNS','IP','Allowlist','Redirect','Socket','Response']
+const CAT_COLORS = {'Loopback bypass':'var(--red)','Cloud metadata':'var(--amber)','Private network':'var(--purple)','Protocol switch':'var(--blue)','Redirect bypass':'#f97316','Parameter injection':'#06b6d4','DNS bypass':'#a78bfa'}
+
+let company = null
+let allAttacks = []
+let ptVariants = []
+let pollTimer = null
+
+// ── PAGE NAVIGATION ───────────────────────────────────────────────────────────
+function showLanding() { setPage('landing') }
+function showLogin()   { setPage('login') }
+function showRegister(){ setPage('register') }
+
+function setPage(name) {
+  ['landing','login','register','dashboard'].forEach(p => {
+    document.getElementById('page-'+p).classList.toggle('hidden', p !== name)
+  })
+  document.getElementById('nav-auth-links').classList.toggle('hidden', name === 'dashboard')
+  document.getElementById('nav-dash-links').classList.toggle('hidden', name !== 'dashboard')
+}
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim()
+  const pass  = document.getElementById('login-pass').value
+  const btn   = document.getElementById('login-btn')
+  const err   = document.getElementById('login-err')
+  err.style.display = 'none'
+  if (!email || !pass) { err.textContent = 'Enter email and password'; err.style.display = 'block'; return }
+  btn.disabled = true; btn.textContent = 'Signing in...'
+  try {
+    const res = await fetch(PLATFORM + '/api/login', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password: pass }), credentials: 'include',
+    })
+    const data = await res.json()
+    if (!res.ok) { err.textContent = data.error || 'Invalid credentials'; err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Sign In'; return }
+    company = data.company
+    openDashboard()
+  } catch(e) {
+    err.textContent = 'Cannot connect to Guardian Platform — make sure it is running'
+    err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Sign In'
+  }
+}
+
+// ── REGISTER ──────────────────────────────────────────────────────────────────
+async function doRegister() {
+  const name = document.getElementById('reg-name').value.trim()
+  const email = document.getElementById('reg-email').value.trim()
+  const pass  = document.getElementById('reg-pass').value
+  const site  = document.getElementById('reg-site').value.trim()
+  const btn   = document.getElementById('reg-btn')
+  const err   = document.getElementById('reg-err')
+  err.style.display = 'none'
+  if (!name || !email || !pass) { err.textContent = 'Name, email and password required'; err.style.display = 'block'; return }
+  btn.disabled = true; btn.textContent = 'Registering...'
+  try {
+    const res = await fetch(PLATFORM + '/api/register', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ name, email, password: pass, website: site }), credentials: 'include',
+    })
+    const data = await res.json()
+    if (!res.ok) { err.textContent = data.error || 'Registration failed'; err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Register — Get API Key'; return }
+    company = data.company
+    // Auto login
+    await fetch(PLATFORM + '/api/login', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email, password: pass }), credentials: 'include',
+    })
+    // Show success
+    document.getElementById('reg-api-key').textContent = data.company.apiKey
+    document.getElementById('reg-snippet').innerHTML =
+      '// server.js\nimport { protect } from \'guardian-sdk\'\napp.use(protect(\'' + data.company.apiKey + '\'))'
+    document.getElementById('reg-form-wrap').classList.add('hidden')
+    document.getElementById('reg-success-wrap').classList.remove('hidden')
+  } catch(e) {
+    err.textContent = 'Cannot connect to Guardian Platform'
+    err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Register — Get API Key'
+  }
+}
+
+function goToDashboard() { openDashboard() }
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+function openDashboard() {
+  if (!company) return
+  setPage('dashboard')
+  document.getElementById('page-dashboard').style.display = 'block'  // ADD THIS
+  document.getElementById('sb-name').textContent = company.name
+  document.getElementById('nav-company-name').textContent = company.name
+  document.getElementById('ov-sub').textContent = company.name + ' · Security overview'
+  document.getElementById('pt-target').textContent = 'Target: ' + (company.website || 'http://localhost:4000') + '/api/fetch-url'
+  document.getElementById('ak-key').textContent = company.apiKey
+  document.getElementById('ak-co').textContent = company.name
+  document.getElementById('ak-em').textContent = company.email
+  document.getElementById('ak-dt').textContent = new Date(company.registeredAt).toLocaleDateString()
+  document.getElementById('ak-site').textContent = company.website || '—'
+  document.getElementById('ak-snippet').innerHTML =
+    '// server.js\nimport { protect } from \'guardian-sdk\'\napp.use(protect(\'' + company.apiKey + '\'))'
+  if (pollTimer) clearInterval(pollTimer)
+  poll()
+  pollTimer = setInterval(poll, 2000)
+}
+
+async function poll() {
+  try {
+    const res = await fetch(PLATFORM + '/api/dashboard/status?companyId=' + company.id, { credentials: 'include' })
+    if (res.status === 401) { logout(); return }
+    const data = await res.json()
+    const c = data.connected
+
+    document.getElementById('conn-hero').className = 'conn-hero ' + (c ? 'on' : 'off')
+    document.getElementById('conn-icon').textContent = c ? '✅' : '🔌'
+    document.getElementById('conn-title').textContent = c ? company.name + ' — Connected & Protected' : company.name + ' — Not Connected'
+    document.getElementById('conn-sub').textContent = c
+      ? 'Guardian SDK active. All requests validated through 7-stage pipeline. Attacks reported here in real time.'
+      : 'Add Guardian SDK to your server. See API Key & Setup tab.'
+    document.getElementById('sb-dot').className = 'sb-dot ' + (c ? 'on' : 'off')
+    document.getElementById('sb-status').textContent = c ? 'Connected' : 'Disconnected'
+    document.getElementById('sb-status').style.color = c ? 'var(--green)' : 'var(--text3)'
+    document.getElementById('nav-conn-dot').className = 'sb-dot ' + (c ? 'on' : 'off')
+    document.getElementById('nav-conn-text').textContent = c ? 'Connected' : 'Disconnected'
+
+    const s = data.stats
+    document.getElementById('st-total').textContent = s.totalAttacks
+    document.getElementById('st-today').textContent = s.todayAttacks
+    document.getElementById('st-type').textContent = (s.topAttackType || '—').replace(/_/g,' ').slice(0,10)
+    document.getElementById('st-last').textContent = s.lastAttack ? ago(s.lastAttack) : 'Never'
+
+    // Fetch attacks
+    const ar = await fetch(PLATFORM + '/api/dashboard/attacks?companyId=' + company.id, { credentials: 'include' })
+    const attackData = await ar.json()
+    allAttacks = Array.isArray(attackData) ? attackData : []
+    renderAttacks()
+
+    // Render suspicious IPs
+    if (data.suspiciousIPs && data.suspiciousIPs.length > 0) {
+      renderSuspiciousIPs(data.suspiciousIPs)
+    }
+    if (data.company && data.company.blockedIPs) {
+  renderBlockedIPs(data.company.blockedIPs)
+}
+  } catch(e) { console.log('Poll error:', e) }
+}
+
+function renderAttacks() {
+  console.log('renderAttacks called, total:', allAttacks.length)
+  
+  const mk = (a, i, fn) => `
+    <div class="a-item" onclick="${fn}(${i})">
+      <div class="a-ip">${a.attackerIP||'—'}</div>
+      <div class="a-type">${(a.attackType||'unknown').replace(/_/g,' ')}</div>
+      <div class="a-loc">${a.location||'unknown'}</div>
+      <div class="a-stage">S${a.blockedAtStage||'?'}</div>
+      <div class="a-time">${ago(a.timestamp)}</div>
+    </div>`
+
+  const empty = '<div class="no-attacks">No attacks yet</div>'
+
+  const ovEl = document.getElementById('ov-attacks')
+  const logEl = document.getElementById('attack-log')
+  const expEl = document.getElementById('explain-list')
+
+  if (!allAttacks || !allAttacks.length) {
+    if(ovEl) ovEl.innerHTML = empty
+    if(logEl) logEl.innerHTML = '<div class="no-attacks">No attacks logged</div>'
+    if(expEl) expEl.innerHTML = empty
+    return
+  }
+
+  if(ovEl) ovEl.innerHTML = allAttacks.slice(0,5).map((a,i) => mk(a,i,'showDetail')).join('')
+  if(logEl) logEl.innerHTML = allAttacks.map((a,i) => mk(a,i,'showDetail')).join('')
+  if(expEl) expEl.innerHTML = allAttacks.slice(0,10).map((a,i) => `
+    <div class="a-item" onclick="explainAttack(${i})">
+      <div class="a-ip">${a.attackerIP||'—'}</div>
+      <div class="a-type">${(a.attackType||'unknown').replace(/_/g,' ')}</div>
+      <div class="a-stage">S${a.blockedAtStage||'?'}</div>
+      <div class="a-time">${ago(a.timestamp)}</div>
+    </div>`).join('')
+}
+function renderSuspiciousIPs(ips) {
+  // Find or create card
+  let el = document.getElementById('suspicious-ips-card')
+  if (!el) {
+    const ov = document.getElementById('dpage-overview')
+    el = document.createElement('div')
+    el.id = 'suspicious-ips-card'
+    el.className = 'card'
+    el.style.marginTop = '14px'
+    ov.appendChild(el)
+  }
+
+  el.innerHTML = `
+    <div class="card-title">
+      🚨 Suspicious IPs
+      <span style="font-size:10px;color:var(--text3);font-weight:400">
+        IPs with 3+ attacks · Block to deny all access
+      </span>
+    </div>
+    ${ips.length === 0 ? '<div class="no-attacks">No suspicious IPs detected</div>' :
+      ips.map(({ ip, count, blocked }) => `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div style="font-family:monospace;font-size:13px;font-weight:700;color:${blocked ? 'var(--text3)' : 'var(--red)'};min-width:130px">${ip}</div>
+          <div style="flex:1">
+            <div style="font-size:12px;color:var(--text2);margin-bottom:3px">${count} attack${count>1?'s':''} detected</div>
+            <div style="font-size:10px;color:var(--text3)" id="loc-${ip.replace(/[.:]/g,'_')}">Locating...</div>
+          </div>
+          <div style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;background:${blocked ? 'var(--green-bg)' : 'var(--red-bg)'};color:${blocked ? 'var(--green)' : 'var(--red)'}">
+            ${blocked ? '🔒 BLOCKED' : '⚠ ACTIVE'}
+          </div>
+          <button
+            id="btn-${ip.replace(/[.:]/g,'_')}"
+            onclick="toggleBlockIP('${ip}', ${blocked})"
+            style="background:${blocked ? 'var(--surface2)' : 'var(--red2)'};color:${blocked ? 'var(--text2)' : '#fff'};border:1px solid ${blocked ? 'var(--border)' : 'transparent'};border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s">
+            ${blocked ? '🔓 Unblock' : '🔒 Block IP'}
+          </button>
+        </div>`).join('')}
+  `
+
+  // Geolocate each IP
+  ips.forEach(({ ip }) => {
+    const el = document.getElementById('loc-' + ip.replace(/[.:]/g,'_'))
+    if (!el) return
+    if (ip === 'unknown' || ip === 'browser' || ip.startsWith('192.168') || ip.startsWith('127.') || ip === '::1') {
+      el.textContent = '📍 Local network'
+      return
+    }
+    fetch(`http://ip-api.com/json/${ip}?fields=city,regionName,country,isp`)
+      .then(r => r.json())
+      .then(d => {
+        if (d.city) el.textContent = `📍 ${d.city}, ${d.regionName}, ${d.country} · ${d.isp || ''}`
+        else el.textContent = '📍 Location unknown'
+      })
+      .catch(() => { el.textContent = '📍 Location unavailable' })
+  })
+}
+async function manualBlock() {
+  const ip = document.getElementById('manual-ip').value.trim()
+  if (!ip) return
+  await toggleBlockIP(ip, false)
+  document.getElementById('manual-ip').value = ''
+}
+
+function renderBlockedIPs(blockedIPs) {
+  const el = document.getElementById('blocked-ips-list')
+  if (!el) return
+  if (!blockedIPs || !blockedIPs.length) {
+    el.innerHTML = '<div class="no-attacks">No IPs blocked yet</div>'
+    return
+  }
+  el.innerHTML = `
+    <div class="card-title">Blocked IPs (${blockedIPs.length})</div>
+    ${blockedIPs.map(ip => `
+      <div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border)">
+        <div style="font-family:monospace;font-size:13px;color:var(--text3);flex:1">${ip}</div>
+        <div style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:var(--green-bg);color:var(--green)">🔒 BLOCKED</div>
+        <button onclick="toggleBlockIP('${ip}', true)"
+          style="background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer">
+          🔓 Unblock
+        </button>
+      </div>`).join('')}
+  `
+}
+async function toggleBlockIP(ip, currentlyBlocked) {
+  const action = currentlyBlocked ? 'unblock' : 'block'
+  const btn = document.getElementById('btn-' + ip.replace(/[.:]/g,'_'))
+  if (btn) { btn.disabled = true; btn.textContent = 'Working...' }
+
+  try {
+    const res = await fetch(PLATFORM + '/api/dashboard/block-ip', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ ip, action, companyId: company.id }),
+    })
+    const data = await res.json()
+    if (data.ok) {
+      // Show feedback
+      if (btn) {
+        btn.textContent = action === 'block' ? '✓ Blocked!' : '✓ Unblocked!'
+        btn.style.background = action === 'block' ? 'var(--green)' : 'var(--surface2)'
+        btn.style.color = action === 'block' ? '#000' : 'var(--text2)'
+      }
+      setTimeout(() => poll(), 1000)
+    }
+  } catch(e) {
+    console.log('Block IP error:', e)
+    if (btn) { btn.disabled = false; btn.textContent = currentlyBlocked ? '🔓 Unblock' : '🔒 Block IP' }
+  }
+}
+
+function showDetail(idx) {
+  const a = allAttacks[idx]; if (!a) return
+  const stages = STAGE_NAMES.map((n,i)=>{const p=i+1<a.blockedAtStage,f=i+1===a.blockedAtStage;return `<div class="smc ${p?'p':f?'f':'u'}">${p?'✓':f?'✗':'?'}<br><span style="font-size:7px">${n}</span></div>`}).join('')
+  document.getElementById('modal-body').innerHTML = `<div class="d-url">${a.url}</div><div class="d-row"><span class="d-key">Attack type</span><span class="d-val">${(a.attackType||'—').replace(/_/g,' ')}</span></div><div class="d-row"><span class="d-key">Blocked at</span><span class="d-val" style="color:var(--red)">Stage ${a.blockedAtStage} of 7</span></div><div class="d-row"><span class="d-key">Attacker IP</span><span class="d-val" style="font-family:monospace;color:var(--red)">${a.attackerIP||'unknown'}</span></div><div class="d-row"><span class="d-key">Location</span><span class="d-val">${a.location||'unknown'}</span></div><div class="d-row"><span class="d-key">Time</span><span class="d-val">${new Date(a.timestamp).toLocaleString()}</span></div>${a.reason?`<div class="d-row" style="border:none"><span class="d-key">Reason</span><span class="d-val">${a.reason}</span></div>`:''}<div style="font-size:10px;color:var(--text3);margin-top:10px;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em">Pipeline trace</div><div class="stage-mini">${stages}</div>`
+  document.getElementById('overlay').classList.add('show')
+}
+
+
+async function explainAttack(idx) {
+  const a = allAttacks[idx]; if (!a) return
+  showDPage('explain', document.getElementById('nav-explain'))
+  const out = document.getElementById('ai-output')
+  out.style.fontStyle = 'italic'; out.style.color = 'var(--text3)'
+  out.textContent = '⏳ Asking AI to analyze this attack...'
+  const prompt = `Analyze this blocked SSRF attack:\nURL: ${a.url}\nAttack type: ${(a.attackType||'unknown').replace(/_/g,' ')}\nBlocked at stage: ${a.blockedAtStage} of 7\nReason: ${a.reason||'Guardian blocked it'}\nAttacker IP: ${a.attackerIP||'unknown'}\nLocation: ${a.location||'unknown'}\n\nWrite 3 short paragraphs:\n1. What the attacker tried (specific technique)\n2. What data would have been stolen\n3. Why stage ${a.blockedAtStage} caught it\nBe specific, 2-3 sentences each.`
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
+      body: JSON.stringify({model:'llama-3.3-70b-versatile',messages:[{role:'user',content:prompt}],stream:true,max_tokens:400}),
+    })
+    const reader = res.body.getReader(); const decoder = new TextDecoder()
+    let buf='',text=''; out.style.fontStyle='normal'; out.style.color='var(--text)'; out.textContent=''
+    while(true){
+      const {done,value}=await reader.read(); if(done)break
+      buf+=decoder.decode(value,{stream:true}); const lines=buf.split('\n'); buf=lines.pop()
+      for(const line of lines){
+        if(!line.startsWith('data: '))continue; const d=line.slice(6); if(d==='[DONE]')return
+        try{const c=JSON.parse(d);const delta=c.choices?.[0]?.delta?.content||'';if(delta){text+=delta;out.textContent=text}}catch{}
+      }
+    }
+  } catch(e){ out.textContent='AI unavailable: '+e.message }
+}
+
+// ── PENTEST ───────────────────────────────────────────────────────────────────
+async function runPentest() {
+  const btn=document.getElementById('pt-btn'); btn.disabled=true; btn.textContent='Running...'
+  ptVariants=[]; let blocked=0,passed=0
+  document.getElementById('pt-sb').style.display='flex'
+  document.getElementById('pt-sum').style.display='none'
+  document.getElementById('pt-cats').style.display='none'
+  document.getElementById('pt-grid-card').style.display='none'
+  document.getElementById('pt-tbl-card').style.display='none'
+  document.getElementById('pt-cert').style.display='none'
+  document.getElementById('pt-grid').innerHTML=''
+  document.getElementById('pt-tbl').innerHTML=''
+  setSt('run','Generating attack variants...')
+  document.getElementById('pt-prog').style.display='block'
+  const target=(company?.website||'http://localhost:4000')+'/api/fetch-url'
+  try {
+    const res=await fetch(PLATFORM + '/api/proxy', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'x-api-key': company.apiKey
+  },
+  body: JSON.stringify({ url: target })
+})
+    const reader=res.body.getReader(); const decoder=new TextDecoder(); let buf=''
+    while(true){
+      const {done,value}=await reader.read(); if(done)break
+      buf+=decoder.decode(value,{stream:true}); const lines=buf.split('\n'); buf=lines.pop()
+      for(const line of lines){
+        if(!line.startsWith('data: '))continue
+        try{
+          const d=JSON.parse(line.slice(6))
+          if(d.type==='status'){setSt('run',d.message)}
+          else if(d.type==='total'){renderPend(d.total);document.getElementById('pt-sum').style.display='grid';document.getElementById('pt-grid-card').style.display='block';document.getElementById('pt-tbl-card').style.display='block'}
+          else if(d.type==='result'){
+            ptVariants.push(d); if(d.blocked)blocked++; else passed++
+            const pct=((d.index+1)/d.total*100).toFixed(0)
+            document.getElementById('pt-bar').style.width=pct+'%'
+            document.getElementById('pt-prog-txt').textContent=d.index+1+'/'+d.total
+            setSt('run','Testing: '+d.technique)
+            document.getElementById('pt-blocked').textContent=blocked
+            document.getElementById('pt-passed').textContent=passed
+            document.getElementById('pt-total').textContent=ptVariants.length
+            updCell(d.index,d); addRow(d); updCats()
+          }
+          else if(d.type==='complete'){
+            setSt('done',d.message); btn.disabled=false; btn.textContent='🚀 Run Again'
+            if(passed===0&&blocked>0){document.getElementById('pt-cert').style.display='block';document.getElementById('cert-n').textContent=blocked}
+          }
+          else if(d.type==='error'){setSt('err','Error: '+d.message);btn.disabled=false;btn.textContent='🚀 Start Security Test'}
+        }catch{}
+      }
+    }
+  }catch(e){setSt('err','Failed: '+e.message);btn.disabled=false;btn.textContent='🚀 Start Security Test'}
+}
+function setSt(s,t){document.getElementById('pt-dot').className='s-dot '+s;document.getElementById('pt-txt').textContent=t}
+function renderPend(n){document.getElementById('pt-grid').innerHTML=Array.from({length:n},(_,i)=>`<div class="v-cell pending" id="ptc-${i}"><div class="v-num">${i+1}</div><div class="v-icon" style="color:var(--text3)">·</div><div class="v-stage">—</div></div>`).join('')}
+function updCell(idx,d){const c=document.getElementById('ptc-'+idx);if(!c)return;const col=d.blocked?'var(--green)':'var(--red)';c.className='v-cell '+(d.blocked?'blocked':'passed');c.innerHTML=`<div class="v-num">${idx+1}</div><div class="v-icon" style="color:${col}">${d.blocked?'✓':'✗'}</div><div class="v-stage" style="color:${col}">${d.blocked?'S'+d.blockedAtStage:'!'}</div>`;c.onclick=()=>showPtD(idx)}
+function addRow(d){const short=d.url.length>38?d.url.slice(0,38)+'…':d.url;const col=CAT_COLORS[d.category]||'var(--text2)';document.getElementById('pt-tbl').innerHTML+=`<tr onclick="showPtD(${d.index})"><td style="color:var(--text3)">${d.index+1}</td><td><span style="font-family:monospace;font-size:10px" title="${d.url}">${short}</span></td><td>${d.technique}</td><td style="color:${col};font-size:10px">${d.category}</td><td><span class="tb ${d.blocked?'tb-g':'tb-r'}">${d.blocked?'BLOCKED':'PASSED'}</span></td><td style="color:var(--text3)">${d.blocked?'S'+d.blockedAtStage:'—'}</td></tr>`}
+function updCats(){const cats={};ptVariants.forEach(v=>{if(!cats[v.category])cats[v.category]={total:0,blocked:0};cats[v.category].total++;if(v.blocked)cats[v.category].blocked++});const grid=document.getElementById('pt-cats');grid.style.display='grid';grid.innerHTML=Object.entries(cats).map(([cat,d])=>{const pct=d.total?(d.blocked/d.total*100):0;const col=CAT_COLORS[cat]||'var(--green)';return`<div class="cat-card"><div class="cat-name" style="color:${col}">${cat}</div><div class="cat-bar-bg"><div class="cat-bar" style="width:${pct}%;background:${col}"></div></div><div class="cat-stats"><span>${d.blocked}/${d.total}</span><span>${pct.toFixed(0)}%</span></div></div>`}).join('')}
+function showPtD(idx){const d=ptVariants[idx];if(!d)return;const stages=STAGE_NAMES.map((n,i)=>{const p=d.blocked&&i+1<d.blockedAtStage,f=d.blocked&&i+1===d.blockedAtStage;return`<div class="smc ${p?'p':f?'f':'u'}">${p?'✓':f?'✗':'?'}<br><span style="font-size:7px">${n}</span></div>`}).join('');document.getElementById('modal-body').innerHTML=`<div style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:10px;background:${d.blocked?'var(--green-bg)':'var(--red-bg)'};border:1px solid ${d.blocked?'var(--green-border)':'var(--red-border)'};color:${d.blocked?'var(--green)':'var(--red)'}">${d.blocked?'✓ BLOCKED':'✗ PASSED'}</div><div class="d-url">${d.url}</div><div class="d-row"><span class="d-key">Technique</span><span class="d-val">${d.technique}</span></div><div class="d-row"><span class="d-key">Category</span><span class="d-val" style="color:${CAT_COLORS[d.category]||'var(--text)'}">${d.category}</span></div>${d.blocked?`<div class="d-row"><span class="d-key">Attack type</span><span class="d-val">${(d.attackType||'—').replace(/_/g,' ')}</span></div><div class="d-row" style="border:none"><span class="d-key">Blocked at</span><span class="d-val" style="color:var(--red)">Stage ${d.blockedAtStage} of 7</span></div>`:`<div class="d-row" style="border:none"><span class="d-key">Status</span><span class="d-val" style="color:var(--red)">Not blocked</span></div>`}<div style="font-size:10px;color:var(--text3);margin-top:10px;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em">Pipeline trace</div><div class="stage-mini">${stages}</div>`;document.getElementById('overlay').classList.add('show')}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function showDPage(name, el) {
+  document.querySelectorAll('.dpage').forEach(p=>p.classList.remove('active'))
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'))
+  document.getElementById('dpage-'+name).classList.add('active')
+  if(el) el.classList.add('active')
+}
+function closeMod(e){if(!e||e.target===document.getElementById('overlay'))document.getElementById('overlay').classList.remove('show')}
+function ago(ts){const d=Date.now()-new Date(ts).getTime();if(d<60000)return Math.floor(d/1000)+'s ago';if(d<3600000)return Math.floor(d/60000)+'m ago';return Math.floor(d/3600000)+'h ago'}
+async function logout(){if(pollTimer)clearInterval(pollTimer);company=null;allAttacks=[];await fetch(PLATFORM+'/api/logout',{method:'POST',credentials:'include'}).catch(()=>{});showLanding()}
+
+// Check if already logged in
+fetch(PLATFORM+'/api/me',{credentials:'include'}).then(r=>{if(r.ok)return r.json()}).then(d=>{if(d){company=d;openDashboard()}}).catch(()=>{})
+
+// Keyboard enter on auth forms
+document.addEventListener('keydown', e => {
+  if(e.key!=='Enter')return
+  const lp=!document.getElementById('page-login').classList.contains('hidden')
+  const rp=!document.getElementById('page-register').classList.contains('hidden')
+  if(lp)doLogin()
+  else if(rp)doRegister()
+})
+</script>
+</body>
+</html>

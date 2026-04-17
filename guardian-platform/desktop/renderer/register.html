@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src http://localhost:*">
+  <title>Guardian — Register</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#080b12;--surface:#0d1117;--surface2:#161b22;--border:#21262d;--text:#e6edf3;--text2:#8b949e;--text3:#484f58;--red:#ff3b3b;--red2:#da3633;--red-bg:rgba(255,59,59,0.08);--red-border:rgba(255,59,59,0.25);--green:#3fb950;--green-bg:rgba(63,185,80,0.08);--green-border:rgba(63,185,80,0.3)}
+    body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;height:100vh;display:flex;flex-direction:column;user-select:none}
+    .titlebar{height:38px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;-webkit-app-region:drag;flex-shrink:0}
+    .titlebar-left{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text2)}
+    .titlebar-dot{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 5px var(--red)}
+    .titlebar-controls{display:flex;gap:4px;-webkit-app-region:no-drag}
+    .ctrl-btn{width:28px;height:24px;border:none;background:transparent;color:var(--text3);cursor:pointer;border-radius:4px;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+    .ctrl-btn:hover{background:var(--surface2);color:var(--text)}
+    .ctrl-btn.close-btn:hover{background:#da3633;color:#fff}
+    .main{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+    .wrap{width:100%;max-width:440px;padding:10px 0}
+    .back-btn{display:flex;align-items:center;gap:6px;color:var(--text2);font-size:13px;cursor:pointer;margin-bottom:20px;background:none;border:none;padding:0}
+    .back-btn:hover{color:var(--text)}
+    .logo{text-align:center;margin-bottom:24px}
+    .logo h1{font-size:20px;font-weight:800;margin-bottom:4px}
+    .logo p{font-size:13px;color:var(--text2)}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px}
+    .card h2{font-size:17px;font-weight:700;margin-bottom:4px}
+    .card-sub{font-size:13px;color:var(--text2);margin-bottom:22px}
+    .field{margin-bottom:14px}
+    .field label{display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+    .field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-size:14px;outline:none;transition:border-color .15s}
+    .field input:focus{border-color:var(--red)}
+    .reg-btn{width:100%;padding:12px;background:var(--red2);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:6px}
+    .reg-btn:hover{background:var(--red)}
+    .reg-btn:disabled{background:#21262d;color:var(--text3);cursor:not-allowed}
+    .error{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);padding:9px 12px;border-radius:7px;font-size:12px;margin-bottom:14px;display:none}
+    /* success state */
+    .success-card{background:var(--surface);border:1px solid var(--green-border);border-radius:14px;padding:32px;text-align:center;display:none}
+    .success-icon{font-size:48px;margin-bottom:16px}
+    .success-title{font-size:18px;font-weight:800;color:var(--green);margin-bottom:8px}
+    .success-sub{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6}
+    .api-key-box{background:var(--surface2);border:1px solid var(--green-border);border-radius:8px;padding:12px 16px;font-family:monospace;font-size:13px;color:var(--green);word-break:break-all;margin-bottom:16px}
+    .api-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+    .install-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;font-family:monospace;font-size:12px;color:var(--text2);text-align:left;margin-bottom:20px;line-height:1.8}
+    .go-btn{background:var(--green);color:#000;border:none;border-radius:8px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
+    .go-btn:hover{opacity:.9}
+  </style>
+</head>
+<body>
+
+<div class="titlebar">
+  <div class="titlebar-left">
+    <div class="titlebar-dot"></div>
+    Guardian Security — Register
+  </div>
+  <div class="titlebar-controls">
+    <button class="ctrl-btn" onclick="window.electron.minimize()">─</button>
+    <button class="ctrl-btn" onclick="window.electron.maximize()">□</button>
+    <button class="ctrl-btn close-btn" onclick="window.electron.close()">✕</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="wrap">
+    <button class="back-btn" onclick="window.electron.navigate('login.html')">← Back to login</button>
+
+    <div class="logo">
+      <h1>🛡 Register your company</h1>
+      <p>Get instant SSRF protection for your server</p>
+    </div>
+
+    <!-- Registration form -->
+    <div class="card" id="reg-card">
+      <h2>Company Registration</h2>
+      <div class="card-sub">Takes 30 seconds · Instant API key</div>
+
+      <div class="error" id="error-msg"></div>
+
+      <div class="field"><label>Company Name *</label><input id="r-name" placeholder="Acme Corp" /></div>
+      <div class="field"><label>Email *</label><input type="email" id="r-email" placeholder="admin@company.com" /></div>
+      <div class="field"><label>Password *</label><input type="password" id="r-pass" placeholder="Min 8 characters" /></div>
+      <div class="field"><label>Website URL</label><input id="r-website" placeholder="https://yourcompany.com" /></div>
+
+      <button class="reg-btn" id="reg-btn" onclick="register()">Register — Get API Key</button>
+    </div>
+
+    <!-- Success state -->
+    <div class="success-card" id="success-card">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">You're protected!</div>
+      <div class="success-sub">Your company is registered. Add this API key to your server to activate Guardian protection.</div>
+
+      <div class="api-label">Your API Key</div>
+      <div class="api-key-box" id="api-key-display">—</div>
+
+      <div class="api-label" style="text-align:left;margin-bottom:8px">Add to your server.js</div>
+      <div class="install-box" id="install-snippet"></div>
+
+      <button class="go-btn" onclick="goToDashboard()">Open Dashboard →</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const PLATFORM = 'http://localhost:6000'
+  let registeredCompany = null
+
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') register() })
+
+  async function register() {
+    const name    = document.getElementById('r-name').value.trim()
+    const email   = document.getElementById('r-email').value.trim()
+    const pass    = document.getElementById('r-pass').value
+    const website = document.getElementById('r-website').value.trim()
+    const btn     = document.getElementById('reg-btn')
+    const err     = document.getElementById('error-msg')
+
+    err.style.display = 'none'
+    if (!name || !email || !pass) {
+      err.textContent = 'Company name, email and password are required'
+      err.style.display = 'block'
+      return
+    }
+
+    btn.disabled = true
+    btn.textContent = 'Registering...'
+
+    try {
+      const res = await fetch(`${PLATFORM}/api/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password: pass, website }),
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        err.textContent = data.error || 'Registration failed'
+        err.style.display = 'block'
+        btn.disabled = false
+        btn.textContent = 'Register — Get API Key'
+        return
+      }
+
+      registeredCompany = data.company
+
+      // Show success
+      document.getElementById('reg-card').style.display = 'none'
+      document.getElementById('api-key-display').textContent = data.company.apiKey
+      document.getElementById('install-snippet').innerHTML =
+        `<span style="color:#8b949e">// Add to your server.js</span>\n` +
+        `<span style="color:#79c0ff">import</span> { protect } <span style="color:#79c0ff">from</span> <span style="color:#a5d6ff">'guardian-sdk'</span>\n` +
+        `app.<span style="color:#d2a8ff">use</span>(protect(<span style="color:#a5d6ff">'${data.company.apiKey}'</span>))`
+      document.getElementById('success-card').style.display = 'block'
+
+      // Auto login
+      await fetch(`${PLATFORM}/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: pass }),
+        credentials: 'include',
+      })
+      sessionStorage.setItem('company', JSON.stringify(data.company))
+
+    } catch (e) {
+      err.textContent = 'Cannot connect to Guardian Platform.'
+      err.style.display = 'block'
+      btn.disabled = false
+      btn.textContent = 'Register — Get API Key'
+    }
+  }
+
+  function goToDashboard() {
+    window.electron.navigate('dashboard.html')
+  }
+</script>
+</body>
+</html>

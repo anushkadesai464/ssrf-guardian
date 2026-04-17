@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TechNot Corp — Login</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(135deg,#0f172a,#1e3a5f);min-height:100vh;display:flex;flex-direction:column}
+    nav{padding:0 40px;height:64px;display:flex;align-items:center}
+    .brand{color:#fff;font-size:18px;font-weight:800;text-decoration:none;display:flex;align-items:center;gap:8px}
+    .brand-dot{width:8px;height:8px;border-radius:50%;background:#3b82f6}
+    .wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:40px}
+    .card{background:#fff;border-radius:20px;padding:44px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+    .card-top{text-align:center;margin-bottom:32px}
+    .card-top h2{font-size:24px;font-weight:800;color:#0f172a;margin-bottom:6px}
+    .card-top p{font-size:14px;color:#64748b}
+    label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px}
+    input{width:100%;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;outline:none;margin-bottom:18px;transition:border-color .15s}
+    input:focus{border-color:#3b82f6}
+    .login-btn{width:100%;padding:13px;background:#1d4ed8;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s}
+    .login-btn:hover{background:#1e40af}
+    .error{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
+    .hint{margin-top:20px;background:#f8fafc;border-radius:10px;padding:14px;font-size:12px;color:#64748b}
+    .hint strong{color:#374151;display:block;margin-bottom:6px}
+    .hint-row{display:flex;justify-content:space-between;margin-bottom:3px}
+  </style>
+</head>
+<body>
+<nav><a href="/" class="brand"><div class="brand-dot"></div>TechNot Corp</a></nav>
+<div class="wrap">
+  <div class="card">
+    <div class="card-top">
+      <h2>Employee Login</h2>
+      <p>Sign in to access the TechNot Corp portal</p>
+    </div>
+    <div class="error" id="error-msg"></div>
+    <label>Email address</label>
+    <input type="email" id="email" placeholder="you@technotcorp.com" />
+    <label>Password</label>
+    <input type="password" id="password" placeholder="••••••••" />
+    <button class="login-btn" onclick="login()">Sign In</button>
+    <div class="hint">
+      <strong>Demo credentials:</strong>
+      <div class="hint-row"><span>Admin:</span><span>rajesh@technotcorp.com / pass123</span></div>
+      <div class="hint-row"><span>Employee:</span><span>priya@technotcorp.com / pass123</span></div>
+    </div>
+  </div>
+</div>
+<script>
+  // Check if already logged in
+  fetch('/api/me').then(r => {
+    if (r.ok) r.json().then(d => {
+      window.location.href = d.role === 'admin' ? '/admin.html' : '/employee.html'
+    })
+  })
+
+  async function login() {
+    const email = document.getElementById('email').value.trim()
+    const password = document.getElementById('password').value
+    const errDiv = document.getElementById('error-msg')
+    errDiv.style.display = 'none'
+
+    if (!email || !password) {
+      errDiv.textContent = 'Please enter email and password'
+      errDiv.style.display = 'block'
+      return
+    }
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        errDiv.textContent = data.error || 'Invalid credentials'
+        errDiv.style.display = 'block'
+        return
+      }
+      window.location.href = data.role === 'admin' ? '/admin.html' : '/employee.html'
+    } catch {
+      errDiv.textContent = 'Server error — please try again'
+      errDiv.style.display = 'block'
+    }
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') login() })
+</script>
+</body>
+</html>

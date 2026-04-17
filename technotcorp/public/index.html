@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechNot Corp</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:#fff;color:#1e293b}
+    nav{background:#0f172a;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+    .brand{color:#fff;font-size:20px;font-weight:800;display:flex;align-items:center;gap:10px}
+    .brand-dot{width:10px;height:10px;border-radius:50%;background:#3b82f6}
+    .nav-links{display:flex;align-items:center;gap:28px}
+    .nav-links a{color:#94a3b8;text-decoration:none;font-size:14px;transition:color .15s}
+    .nav-links a:hover{color:#fff}
+    .nav-btn{background:#3b82f6;color:#fff;padding:8px 20px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none}
+    .nav-btn:hover{background:#2563eb;color:#fff}
+    .hero{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1d4ed8 100%);padding:100px 40px;text-align:center;color:#fff}
+    .hero-badge{display:inline-block;background:rgba(59,130,246,0.2);border:1px solid rgba(59,130,246,0.4);color:#93c5fd;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;margin-bottom:24px;letter-spacing:0.05em;text-transform:uppercase}
+    .hero h1{font-size:52px;font-weight:800;margin-bottom:18px;line-height:1.15}
+    .hero h1 span{color:#60a5fa}
+    .hero p{font-size:18px;color:#94a3b8;max-width:560px;margin:0 auto 36px;line-height:1.7}
+    .hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+    .btn-blue{background:#3b82f6;color:#fff;padding:14px 32px;border-radius:10px;font-weight:700;text-decoration:none;font-size:15px}
+    .btn-outline{background:transparent;color:#fff;padding:14px 32px;border-radius:10px;font-weight:600;text-decoration:none;font-size:15px;border:2px solid rgba(255,255,255,0.3)}
+    .stats-bar{background:#1e293b;padding:32px 40px}
+    .stats-inner{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
+    .stat-num{font-size:32px;font-weight:800;color:#3b82f6}
+    .stat-label{font-size:13px;color:#64748b;margin-top:4px}
+    .services{padding:80px 40px;background:#f8fafc}
+    .section-title{text-align:center;font-size:32px;font-weight:800;margin-bottom:12px}
+    .section-sub{text-align:center;color:#64748b;font-size:16px;margin-bottom:48px}
+    .cards{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+    .card{background:#fff;border-radius:16px;padding:32px;box-shadow:0 1px 4px rgba(0,0,0,0.08);transition:box-shadow .2s}
+    .card:hover{box-shadow:0 8px 24px rgba(0,0,0,0.12)}
+    .card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:18px}
+    .card h3{font-size:17px;font-weight:700;margin-bottom:8px}
+    .card p{font-size:14px;color:#64748b;line-height:1.6}
+    .cta{background:linear-gradient(135deg,#1d4ed8,#7c3aed);padding:80px 40px;text-align:center;color:#fff}
+    .cta h2{font-size:36px;font-weight:800;margin-bottom:16px}
+    .cta p{font-size:16px;opacity:0.8;margin-bottom:32px}
+    footer{background:#0f172a;color:#64748b;padding:32px 40px;text-align:center;font-size:13px}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="brand"><div class="brand-dot"></div>TechNot Corp</div>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="#services">Services</a>
+    <a href="#about">About</a>
+    <a href="/login.html" class="nav-btn">Employee Portal</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">Mysuru, Karnataka · Est. 2018</div>
+  <h1>Building <span>Tomorrow's</span><br>Technology Today</h1>
+  <p>TechNot Corp is a leading technology company delivering innovative software solutions, cloud infrastructure, and digital transformation services.</p>
+  <div class="hero-btns">
+    <a href="/login.html" class="btn-blue">Employee Portal →</a>
+    <a href="#services" class="btn-outline">Our Services</a>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div><div class="stat-num">6+</div><div class="stat-label">Employees</div></div>
+    <div><div class="stat-num">₹4.2Cr</div><div class="stat-label">Annual Revenue</div></div>
+    <div><div class="stat-num">12</div><div class="stat-label">Departments</div></div>
+    <div><div class="stat-num">2018</div><div class="stat-label">Founded</div></div>
+  </div>
+</div>
+
+<div class="services" id="services">
+  <div class="section-title">Our Services</div>
+  <div class="section-sub">Comprehensive technology solutions for modern businesses</div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon" style="background:#eff6ff">☁️</div>
+      <h3>Cloud Infrastructure</h3>
+      <p>Scalable cloud solutions on AWS, Azure, and GCP. Migration, optimization, and 24/7 monitoring.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:#f0fdf4">💻</div>
+      <h3>Software Development</h3>
+      <p>Custom web and mobile applications built with modern tech stacks and agile methodologies.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:#fdf4ff">🔒</div>
+      <h3>Cybersecurity</h3>
+      <p>End-to-end security assessments, penetration testing, and compliance consulting.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:#fff7ed">📊</div>
+      <h3>Data Analytics</h3>
+      <p>Business intelligence dashboards, data pipelines, and ML-powered insights.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:#f0f9ff">🤖</div>
+      <h3>AI Integration</h3>
+      <p>LLM integration, automation workflows, and AI-powered product features.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:#fefce8">📱</div>
+      <h3>Mobile Apps</h3>
+      <p>Cross-platform iOS and Android apps with React Native and Flutter.</p>
+    </div>
+  </div>
+</div>
+
+<div class="cta">
+  <h2>Ready to Transform Your Business?</h2>
+  <p>Join 50+ companies that trust TechNot Corp for their technology needs.</p>
+  <a href="/login.html" class="btn-blue">Access Employee Portal</a>
+</div>
+
+<footer>© 2024 TechNot Corp · Mysuru, Karnataka · All rights reserved</footer>
+
+</body>
+</html>

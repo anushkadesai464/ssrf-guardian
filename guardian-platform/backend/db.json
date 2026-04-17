@@ -1,0 +1,468 @@
+{
+  "companies": [
+    {
+      "id": "comp_001",
+      "name": "TechNot Corp",
+      "email": "admin@technotcorp.com",
+      "password": "guardian123",
+      "website": "http://localhost:4000",
+      "apiKey": "grd_live_technotcorp_2024",
+      "plan": "pro",
+      "registeredAt": "2024-01-15T10:00:00.000Z",
+      "connected": true,
+      "lastSeen": "2026-04-15T10:12:38.690Z",
+      "blockedIPs": []
+    },
+    {
+      "id": "comp_1f927c1c",
+      "name": "Test Corp",
+      "email": "test@test.com",
+      "password": "test123",
+      "website": "http://localhost:4000",
+      "apiKey": "grd_live_test_corp_82drjxgu",
+      "plan": "pro",
+      "registeredAt": "2026-04-15T09:45:04.700Z",
+      "connected": false,
+      "lastSeen": null,
+      "attackCount": 0,
+      "blockedIPs": []
+    },
+    {
+      "id": "comp_4f0c76ec",
+      "name": "lion",
+      "email": "ddhruva2005@gmail.com",
+      "password": "12345678",
+      "website": "http://localhost:4000/",
+      "apiKey": "grd_live_lion_xy4qyt4a",
+      "plan": "pro",
+      "registeredAt": "2026-04-15T10:08:32.648Z",
+      "connected": false,
+      "lastSeen": "2026-04-15T15:39:03.184Z",
+      "attackCount": 10,
+      "blockedIPs": []
+    },
+    {
+      "id": "comp_6dc5f89f",
+      "name": "aaa",
+      "email": "2005@gmail.com",
+      "password": "123456",
+      "website": "http://localhost:4000/",
+      "apiKey": "grd_live_aaa_e1yk5f6j",
+      "plan": "pro",
+      "registeredAt": "2026-04-15T10:28:32.622Z",
+      "connected": false,
+      "lastSeen": "2026-04-15T11:35:36.353Z",
+      "attackCount": 1,
+      "blockedIPs": []
+    },
+    {
+      "id": "comp_c94cb89e",
+      "name": "aaa",
+      "email": "2000@gmail.com",
+      "password": "12345678",
+      "website": "http://localhost:4000/",
+      "apiKey": "grd_live_aaa_t7dowl9x",
+      "plan": "pro",
+      "registeredAt": "2026-04-15T10:34:39.927Z",
+      "connected": false,
+      "lastSeen": null,
+      "attackCount": 0,
+      "blockedIPs": []
+    },
+    {
+      "id": "comp_5633e760",
+      "name": "qqq",
+      "email": "lion@gmail.com",
+      "password": "123456",
+      "website": "http://localhost:4000/",
+      "apiKey": "grd_live_qqq_frmz1yfp",
+      "plan": "pro",
+      "registeredAt": "2026-04-15T12:47:11.656Z",
+      "connected": true,
+      "lastSeen": "2026-04-15T12:47:11.656Z",
+      "attackCount": 0,
+      "blockedIPs": []
+    },
+    {
+      "id": "comp_d3c00696",
+      "name": "pppp",
+      "email": "ab@gmail.com",
+      "password": "12345678",
+      "website": "http://localhost:4000/",
+      "apiKey": "grd_live_pppp_xbp2d6pq",
+      "plan": "pro",
+      "registeredAt": "2026-04-15T15:40:50.676Z",
+      "connected": true,
+      "lastSeen": "2026-04-15T16:11:41.284Z",
+      "attackCount": 2,
+      "blockedIPs": []
+    },
+    {
+      "id": "comp_383522ac",
+      "name": "ww",
+      "email": "dd@gmail.com",
+      "password": "12345678",
+      "website": "http://localhost:4000/",
+      "apiKey": "grd_live_ww_znm5m2ny",
+      "plan": "pro",
+      "registeredAt": "2026-04-15T16:13:47.855Z",
+      "connected": false,
+      "lastSeen": "2026-04-15T16:17:57.550Z",
+      "attackCount": 2,
+      "blockedIPs": []
+    },
+    {
+      "id": "comp_84579264",
+      "name": "tiger",
+      "email": "ddh@gmail.com",
+      "password": "12345678",
+      "website": "http://localhost:4000/",
+      "apiKey": "grd_live_tiger_epelsmfu",
+      "plan": "pro",
+      "registeredAt": "2026-04-15T16:31:25.282Z",
+      "connected": true,
+      "lastSeen": "2026-04-15T16:48:30.718Z",
+      "attackCount": 3,
+      "blockedIPs": []
+    }
+  ],
+  "attacks": [
+    {
+      "id": "85a5275e-e45c-4253-8bc2-e7a3371d35be",
+      "companyId": "comp_84579264",
+      "companyName": "tiger",
+      "url": "http://169.254.169.254/latest/meta-data/",
+      "attackType": "private_ip",
+      "blockedAtStage": 3,
+      "reason": "169.254.169.254 is private",
+      "attackerIP": "::1",
+      "location": "Local network",
+      "source": "url-parameter",
+      "stages": [],
+      "timestamp": "2026-04-15T16:36:17.281Z"
+    },
+    {
+      "id": "a457bcbc-732c-48dc-9810-6fab7d5daafb",
+      "companyId": "comp_84579264",
+      "companyName": "tiger",
+      "url": "http://169.254.169.254/latest/meta-data/",
+      "attackType": "private_ip",
+      "blockedAtStage": 3,
+      "reason": "169.254.169.254 is private",
+      "attackerIP": "::1",
+      "location": "Local network",
+      "source": "url-parameter",
+      "stages": [],
+      "timestamp": "2026-04-15T16:33:22.846Z"
+    },
+    {
+      "id": "95485bfc-0e61-4ca3-92d7-3dc274d11714",
+      "companyId": "comp_84579264",
+      "companyName": "tiger",
+      "url": "http://169.254.169.254/latest/meta-data/",
+      "attackType": "private_ip",
+      "blockedAtStage": 3,
+      "reason": "169.254.169.254 is private",
+      "attackerIP": "::1",
+      "location": "Local network",
+      "source": "url-parameter",
+      "stages": [],
+      "timestamp": "2026-04-15T16:33:22.491Z"
+    },
+    {
+      "id": "770bacff-29ac-446c-b00d-bf05ab4e445a",
+      "companyId": "comp_383522ac",
+      "companyName": "ww",
+      "url": "http://169.254.169.254/latest/meta-data/",
+      "attackType": "private_ip",
+      "blockedAtStage": 3,
+      "reason": "169.254.169.254 is private",
+      "attackerIP": "::1",
+      "location": "Local network",
+      "source": "url-parameter",
+      "stages": [],
+      "timestamp": "2026-04-15T16:15:03.436Z"
+    },
+    {
+      "id": "3397e281-3739-4b8b-9316-6e721f51568d",
+      "companyId": "comp_383522ac",
+      "companyName": "ww",
+      "url": "http://169.254.169.254/latest/meta-data/",
+      "attackType": "private_ip",
+      "blockedAtStage": 3,
+      "reason": "169.254.169.254 is private",
+      "attackerIP": "::1",
+      "location": "Local network",
+      "source": "url-parameter",
+      "stages": [],
+      "timestamp": "2026-04-15T16:15:02.917Z"
+    },
+    {
+      "id": "65017731-4931-407f-9b87-fd385e01403b",
+      "companyId": "comp_d3c00696",
+      "companyName": "pppp",
+      "url": "http://169.254.169.254/latest/meta-data/",
+      "attackType": "private_ip",
+      "blockedAtStage": 3,
+      "reason": "169.254.169.254 is private",
+      "attackerIP": "::1",
+      "location": "Local network",
+      "source": "url-parameter",
+      "stages": [],
+      "timestamp": "2026-04-15T15:43:24.448Z"
+    },
+    {
+      "id": "11de7fc3-343c-4b13-8fba-501dcc5aba51",
+      "companyId": "comp_d3c00696",
+      "companyName": "pppp",
+      "url": "http://169.254.169.254/latest/meta-data/",
+      "attackType": "private_ip",
+      "blockedAtStage": 3,
+      "reason": "169.254.169.254 is private",
+      "attackerIP": "::1",
+      "location": "Local network",
+      "source": "url-parameter",
+      "stages": [],
+      "timestamp": "2026-04-15T15:43:24.236Z"
+    },
+    {
+      "id": "507a3610-dc58-4380-b653-add5a8c261d0",
+      "companyId": "comp_4f0c76ec",
+      "companyName": "lion",
+      "url": "http://127.0.0.1/admin",
+      "attackType": "private_ip",
+      "blockedAtStage": 3,
+      "reason": "127.0.0.1 is private",
+      "attackerIP": "::1",
+      "location": "Local network",
+      "source": "url-parameter",
+      "stages": [],
+      "timestamp": "2026-04-15T14:45:11.676Z"
+    },
+    {
+      "id": "cf72d203-5f68-41ad-91ac-b0e6cd007cce",
+      "companyId": "comp_4f0c76ec",
+      "companyName": "lion",
+      "url": "http://127.0.0.1/admin",
+      "attackType": "private_ip",
+      "blockedAtStage": 3,
+      "reason": "127.0.0.1 is private",
+      "attackerIP": "::1",
+      "location": "Local network",
+      "source": "url-parameter",
+      "stages": [],
+      "timestamp": "2026-04-15T14:27:18.434Z"
+    },
+    {
+      "id": "88a88818-4de7-4a51-91d4-f7ad2e0d78ce",
+      "companyId": "comp_4f0c76ec",
+      "companyName": "lion",
+      "url": "http://169.254.169.254/latest/meta-data/",
+      "attackType": "private_ip",
+      "blockedAtStage": 3,
+      "reason": "169.254.169.254 is private",
+      "attackerIP": "::1",
+      "location": "Local network",
+      "source": "url-parameter",
+      "stages": [],
+      "timestamp": "2026-04-15T14:26:25.257Z"
+    },
+    {
+      "id": "41d99b51-d211-4a99-8cbd-45cdbd55c0e6",
+      "companyId": "comp_4f0c76ec",
+      "companyName": "lion",
+      "url": "http://169.254.169.254/latest/meta-data/",
+      "attackType": "private_ip",
+      "blockedAtStage": 3,
+      "reason": "169.254.169.254 is private",
+      "attackerIP": "::1",
+      "location": "Local network",
+      "source": "url-parameter",
+      "stages": [],
+      "timestamp": "2026-04-15T14:26:14.802Z"
+    },
+    {
+      "id": "9bfb3a87-f2a6-4448-8ae8-b641373317e9",
+      "companyId": "comp_4f0c76ec",
+      "companyName": "lion",
+      "url": "http://169.254.169.254/latest/meta-data/",
+      "attackType": "private_ip",
+      "blockedAtStage": 3,
+      "reason": "169.254.169.254 is private",
+      "attackerIP": "::1",
+      "location": "Local network",
+      "source": "url-parameter",
+      "stages": [],
+      "timestamp": "2026-04-15T14:25:57.478Z"
+    },
+    {
+      "id": "5b525139-5193-48f0-b0bf-625dd5df631b",
+      "companyId": "comp_4f0c76ec",
+      "companyName": "lion",
+      "url": "http://localhost:4000//api/fetch-url",
+      "attackType": "ssrf",
+      "blockedAtStage": 3,
+      "reason": "Internal IP blocked",
+      "attackerIP": "::1",
+      "source": "guardian-proxy",
+      "timestamp": "2026-04-15T14:15:44.691Z"
+    },
+    {
+      "id": "95599b3a-2d46-492f-bab0-0a3511a9b077",
+      "companyId": "comp_4f0c76ec",
+      "companyName": "lion",
+      "url": "http://169.254.169.254/",
+      "attackType": "cloud_metadata",
+      "blockedAtStage": 3,
+      "reason": "",
+      "attackerIP": "192.168.1.100",
+      "location": "Bengaluru, Karnataka, India",
+      "source": "test",
+      "stages": [],
+      "timestamp": "2026-04-15T14:15:09.862Z"
+    },
+    {
+      "id": "d7657b1c-8291-42f4-ba6e-7857283ace95",
+      "companyId": "comp_4f0c76ec",
+      "companyName": "lion",
+      "url": "http://169.254.169.254/",
+      "attackType": "cloud_metadata",
+      "blockedAtStage": 3,
+      "reason": "",
+      "attackerIP": "192.168.1.100",
+      "location": "Bengaluru, Karnataka, India",
+      "source": "test",
+      "stages": [],
+      "timestamp": "2026-04-15T14:14:22.944Z"
+    },
+    {
+      "id": "10ad9bd0-b9f9-455e-9b74-5d8a159c333c",
+      "companyId": "comp_4f0c76ec",
+      "companyName": "lion",
+      "url": "http://169.254.169.254/",
+      "attackType": "cloud_metadata",
+      "blockedAtStage": 3,
+      "reason": "",
+      "attackerIP": "192.168.1.1",
+      "location": "Test City",
+      "source": "test",
+      "stages": [],
+      "timestamp": "2026-04-15T14:04:07.133Z"
+    },
+    {
+      "id": "ad71f231-3af1-4535-a089-1b7efa6c3355",
+      "companyId": "comp_6dc5f89f",
+      "companyName": "aaa",
+      "url": "http://169.254.169.254/latest/meta-data/",
+      "attackType": "private_ip",
+      "blockedAtStage": 3,
+      "reason": "169.254.169.254 is private",
+      "attackerIP": "::1",
+      "location": "Local network",
+      "source": "guardian-sdk",
+      "stages": [
+        {
+          "stage": 1,
+          "name": "Scheme check",
+          "pass": true,
+          "detail": "http: ✓"
+        },
+        {
+          "stage": 2,
+          "name": "DNS format",
+          "pass": true,
+          "detail": "169.254.169.254"
+        },
+        {
+          "stage": 3,
+          "name": "IP canonicalize",
+          "pass": false,
+          "detail": "169.254.169.254 is private"
+        },
+        {
+          "stage": 4,
+          "name": "Allowlist",
+          "pass": null,
+          "detail": ""
+        },
+        {
+          "stage": 5,
+          "name": "Redirect intercept",
+          "pass": null,
+          "detail": "runtime only"
+        },
+        {
+          "stage": 6,
+          "name": "Post-connect verify",
+          "pass": null,
+          "detail": "runtime only"
+        },
+        {
+          "stage": 7,
+          "name": "Response cap",
+          "pass": null,
+          "detail": "runtime only"
+        }
+      ],
+      "timestamp": "2026-04-15T10:29:39.527Z"
+    },
+    {
+      "id": "4f993044-2911-4873-9f30-35c0c3a87c36",
+      "companyId": "comp_4f0c76ec",
+      "companyName": "lion",
+      "url": "http://169.254.169.254/latest/meta-data/",
+      "attackType": "private_ip",
+      "blockedAtStage": 3,
+      "reason": "169.254.169.254 is private",
+      "attackerIP": "::1",
+      "location": "Local network",
+      "source": "guardian-sdk",
+      "stages": [
+        {
+          "stage": 1,
+          "name": "Scheme check",
+          "pass": true,
+          "detail": "http: ✓"
+        },
+        {
+          "stage": 2,
+          "name": "DNS format",
+          "pass": true,
+          "detail": "169.254.169.254"
+        },
+        {
+          "stage": 3,
+          "name": "IP canonicalize",
+          "pass": false,
+          "detail": "169.254.169.254 is private"
+        },
+        {
+          "stage": 4,
+          "name": "Allowlist",
+          "pass": null,
+          "detail": ""
+        },
+        {
+          "stage": 5,
+          "name": "Redirect intercept",
+          "pass": null,
+          "detail": "runtime only"
+        },
+        {
+          "stage": 6,
+          "name": "Post-connect verify",
+          "pass": null,
+          "detail": "runtime only"
+        },
+        {
+          "stage": 7,
+          "name": "Response cap",
+          "pass": null,
+          "detail": "runtime only"
+        }
+      ],
+      "timestamp": "2026-04-15T10:14:58.694Z"
+    }
+  ],
+  "sessions": []
+}
